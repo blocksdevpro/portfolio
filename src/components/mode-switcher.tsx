@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { Moon, Sun } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,8 @@ export function ModeSwitcher() {
       className="group/toggle h-8 w-8 px-0 text-primary"
       onClick={toggleTheme}
     >
-      <SunIcon className="hidden [html.dark_&]:block" />
-      <MoonIcon className="hidden [html.light_&]:block" />
+      <Sun className="hidden [html.dark_&]:block" />
+      <Moon className="hidden [html.light_&]:block" />
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

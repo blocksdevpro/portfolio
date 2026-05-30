@@ -1,5 +1,5 @@
 import React from "react";
-import { GraduationCap, Languages as LanguagesIcon } from "lucide-react";
+import { GraduationCap, Translate } from "@phosphor-icons/react";
 import { ResumeData } from "@/types/resume";
 
 interface EducationProps {
@@ -53,7 +53,7 @@ export const Education: React.FC<EducationProps> = ({
             >
               <div className="flex gap-3 items-center">
                 <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-                  <LanguagesIcon className="w-4 h-4" />
+                  <Translate className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-medium text-foreground">
                   {lang.language}

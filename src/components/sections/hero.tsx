@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
-  Verified,
+  SealCheck,
   MapPin,
   Globe,
   Clock,
-  Mail,
+  EnvelopeSimple,
   User,
   Terminal,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { ResumeData } from "@/types/resume";
 
 interface HeroProps {
@@ -50,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({ data }) => {
           <div className="space-y-1">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground flex items-center gap-2">
               {data.name}
-              <Verified className="w-6 h-6 text-blue-500 fill-blue-100 dark:fill-blue-900/30" />
+              <SealCheck className="w-7 h-7 text-blue-500 shrink-0" weight="duotone" />
             </h1>
             <p className="text-lg font-medium text-muted-foreground">
               {data.title}
@@ -118,7 +118,7 @@ export const Hero: React.FC<HeroProps> = ({ data }) => {
             <span>{time} (Local)</span>
           </div>
           <div className="flex items-center gap-3">
-            <Mail className="w-4 h-4 shrink-0" />
+            <EnvelopeSimple className="w-4 h-4 shrink-0" />
             <a
               href={`mailto:${data.email}`}
               className="hover:text-foreground hover:underline underline-offset-4"

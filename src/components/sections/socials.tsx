@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowUpRight, Github, Linkedin, Globe, Twitter } from "lucide-react";
+import { ArrowUpRight, GithubLogo, LinkedinLogo, Globe, XLogo } from "@phosphor-icons/react";
 import { ResumeData } from "@/types/resume";
 
 interface SocialsProps {
@@ -16,7 +16,7 @@ export const Socials: React.FC<SocialsProps> = ({ socials }) => {
           rel="noreferrer"
           className="flex items-center gap-2 p-2 text-muted-foreground hover:text-accent-foreground hover:bg-primary-foreground border rounded-md group transition-all duration-200"
         >
-          <Github className="w-4 h-4" />
+          <GithubLogo className="w-4 h-4" />
           <span className="text-xs font-medium group-hover:underline underline-offset-4">
             GitHub
           </span>
@@ -30,7 +30,7 @@ export const Socials: React.FC<SocialsProps> = ({ socials }) => {
           rel="noreferrer"
           className="flex items-center gap-2 p-2 border rounded-md text-muted-foreground hover:text-accent-foreground hover:bg-primary-foreground group transition-all duration-200"
         >
-          <Linkedin className="w-4 h-4 group-hover:text-blue-600" />
+          <LinkedinLogo className="w-4 h-4 group-hover:text-blue-600" />
           <span className="text-xs font-medium group-hover:underline underline-offset-4">
             LinkedIn
           </span>
@@ -44,7 +44,7 @@ export const Socials: React.FC<SocialsProps> = ({ socials }) => {
           rel="noreferrer"
           className="flex items-center gap-2 p-2 border rounded-md text-muted-foreground hover:text-accent-foreground hover:bg-primary-foreground group transition-all duration-200"
         >
-          <Twitter className="w-4 h-4 group-hover:text-blue-600" />
+          <XLogo className="w-4 h-4 group-hover:text-blue-600" />
           <span className="text-xs font-medium group-hover:underline underline-offset-4">
             Twitter
           </span>

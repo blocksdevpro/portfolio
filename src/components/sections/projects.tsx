@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import {
-  ChevronDown,
-  ChevronUp,
-  GithubIcon,
+  CaretDown,
+  CaretUp,
+  GithubLogo,
   Link as LinkIcon,
   Infinity,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { ResumeData } from "@/types/resume";
 import {
   Tooltip,
@@ -117,7 +117,7 @@ const ProjectItem = ({
                       rel="noopener noreferrer"
                       className="p-2 text-muted-foreground hover:text-foreground transition-colors hover:bg-accent rounded-md"
                     >
-                      <GithubIcon className="size-4" />
+                      <GithubLogo className="size-4" />
                     </a>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -132,9 +132,9 @@ const ProjectItem = ({
                     className="p-2 text-muted-foreground hover:text-foreground transition-colors hover:bg-accent rounded-md"
                   >
                     {isOpen ? (
-                      <ChevronUp className="size-4" />
+                      <CaretUp className="size-4" />
                     ) : (
-                      <ChevronDown className="size-4" />
+                      <CaretDown className="size-4" />
                     )}
                   </button>
                 </TooltipTrigger>
@@ -263,9 +263,9 @@ export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
               ? "Show Less"
               : `Show ${projects.length - INITIAL_PROJECTS_COUNT} More`}
             {showAll ? (
-              <ChevronUp className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+              <CaretUp className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
             ) : (
-              <ChevronDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+              <CaretDown className="size-4 transition-transform duration-300 group-hover:translate-y-0.5" />
             )}
           </button>
         </div>

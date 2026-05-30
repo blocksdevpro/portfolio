@@ -1,17 +1,17 @@
 import React from "react";
 import {
   Database,
-  Server,
-  Container,
+  HardDrives,
+  Package,
   Terminal,
   Cpu,
   Cloud,
-  Zap,
-  Box,
-  Activity,
-  Layers,
-  Radio,
-} from "lucide-react";
+  Lightning,
+  Cube,
+  Pulse,
+  Stack,
+  RadioButton,
+} from "@phosphor-icons/react";
 
 interface TechStackProps {
   skills: string[];
@@ -24,11 +24,11 @@ type SkillConfig = {
 
 const SKILL_MAP: Record<string, SkillConfig> = {
   Python: {
-    icon: <Zap className="w-3 h-3" />,
+    icon: <Lightning className="w-3 h-3" />,
     className: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800",
   },
   FastAPI: {
-    icon: <Zap className="w-3 h-3" />,
+    icon: <Lightning className="w-3 h-3" />,
     className: "bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/30 dark:text-teal-300 dark:border-teal-800",
   },
   PostgreSQL: {
@@ -36,19 +36,19 @@ const SKILL_MAP: Record<string, SkillConfig> = {
     className: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800",
   },
   AsyncIO: {
-    icon: <Activity className="w-3 h-3" />,
+    icon: <Pulse className="w-3 h-3" />,
     className: "bg-cyan-100 text-cyan-800 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-800",
   },
   Redis: {
-    icon: <Layers className="w-3 h-3" />,
+    icon: <Stack className="w-3 h-3" />,
     className: "bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800",
   },
   Docker: {
-    icon: <Container className="w-3 h-3" />,
+    icon: <Package className="w-3 h-3" />,
     className: "bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-800",
   },
   WebSockets: {
-    icon: <Activity className="w-3 h-3" />,
+    icon: <Pulse className="w-3 h-3" />,
     className: "bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800",
   },
   "REST APIs": {
@@ -60,15 +60,15 @@ const SKILL_MAP: Record<string, SkillConfig> = {
     className: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800",
   },
   Nginx: {
-    icon: <Server className="w-3 h-3" />,
+    icon: <HardDrives className="w-3 h-3" />,
     className: "bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800/50 dark:text-slate-300 dark:border-slate-700",
   },
   Pytest: {
-    icon: <Box className="w-3 h-3" />,
+    icon: <Cube className="w-3 h-3" />,
     className: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800",
   },
   gRPC: {
-    icon: <Radio className="w-3 h-3" />,
+    icon: <RadioButton className="w-3 h-3" />,
     className: "bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-800",
   },
   "Rust (learning)": {
