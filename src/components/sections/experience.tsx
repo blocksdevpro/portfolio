@@ -1,4 +1,5 @@
 import React from "react";
+import { ArrowRight } from "@phosphor-icons/react";
 import { ResumeData } from "@/types/resume";
 
 interface ExperienceProps {
@@ -28,9 +29,16 @@ export const Experience: React.FC<ExperienceProps> = ({ experience }) => {
                 • {job.description}
               </span>
             </div>
-            <ul className="list-disc list-outside ml-4 text-sm text-muted-foreground space-y-1 marker:text-gray-300">
-              {job.details.map((detail, i) => (
-                <li key={i}>{detail}</li>
+            <ul className="space-y-1.5 text-sm text-muted-foreground">
+              {job.details.map((detail) => (
+                <li key={detail} className="flex items-start gap-2.5">
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="mt-1 size-3 shrink-0 text-border transition-colors group-hover:text-blue-500"
+                    weight="bold"
+                  />
+                  <span>{detail}</span>
+                </li>
               ))}
             </ul>
           </div>

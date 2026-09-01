@@ -13,7 +13,9 @@ export const Education: React.FC<EducationProps> = ({
 }) => {
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-2 gap-8 animate-fade-in delay-700"
+      className={`grid grid-cols-1 gap-8 animate-fade-in delay-700 ${
+        languages.length > 0 ? "sm:grid-cols-2" : ""
+      }`}
     >
       <section className="space-y-6">
         <h2 className="text-xl font-bold text-foreground">
@@ -41,31 +43,31 @@ export const Education: React.FC<EducationProps> = ({
         </div>
       </section>
 
-      <section className="space-y-6">
-        <h2 className="text-xl font-bold text-foreground">
-          Languages
-        </h2>
-        <div className="space-y-4">
-          {languages.map((lang, idx) => (
-            <div
-              key={idx}
-              className="flex justify-between items-center border-b pb-2 last:border-0"
-            >
-              <div className="flex gap-3 items-center">
-                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-                  <Translate className="w-4 h-4" />
+      {languages.length > 0 && (
+        <section className="space-y-6">
+          <h2 className="text-xl font-bold text-foreground">Languages</h2>
+          <div className="space-y-4">
+            {languages.map((lang, idx) => (
+              <div
+                key={idx}
+                className="flex justify-between items-center border-b pb-2 last:border-0"
+              >
+                <div className="flex gap-3 items-center">
+                  <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+                    <Translate className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-medium text-foreground">
+                    {lang.language}
+                  </h3>
                 </div>
-                <h3 className="text-sm font-medium text-foreground">
-                  {lang.language}
-                </h3>
+                <span className="text-xs text-muted-foreground font-mono">
+                  {lang.level}
+                </span>
               </div>
-              <span className="text-xs text-muted-foreground font-mono">
-                {lang.level}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };
