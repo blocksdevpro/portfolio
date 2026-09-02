@@ -11,8 +11,8 @@ export const Footer: React.FC<FooterProps> = ({ data }) => {
   return (
     <>
       <footer
-        className="pt-12 pb-6 border-t flex flex-col sm:flex-row justify-between items-center text-xs text-muted-foreground animate-fade-in delay-800"
-        
+        className="pt-12 pb-6 border-t flex flex-col sm:flex-row justify-between items-center text-xs text-muted-foreground"
+        data-reveal
       >
         <div className="flex items-center gap-1 mb-2 sm:mb-0">
           <span>

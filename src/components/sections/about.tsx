@@ -84,7 +84,7 @@ export const About: React.FC<AboutProps> = ({ data }) => {
   }
 
   return (
-    <section className="space-y-4 animate-fade-in delay-300">
+    <section id="about" className="space-y-4" data-reveal>
       <h2 className="text-xl font-bold text-foreground">About</h2>
       <div className="prose dark:prose-invert text-sm text-muted-foreground leading-relaxed">
         <p>{data.summary}</p>

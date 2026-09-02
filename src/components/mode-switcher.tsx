@@ -2,26 +2,37 @@
 
 import * as React from "react";
 import { Moon, Sun } from "@phosphor-icons/react";
-import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
+import { useThemeTransition } from "@/hooks/use-theme-transition";
 
 export function ModeSwitcher() {
-  const { setTheme, resolvedTheme } = useTheme();
+  const { toggleTheme } = useThemeTransition();
 
-  const toggleTheme = React.useCallback(() => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
-  }, [resolvedTheme, setTheme]);
+  const handleThemeToggle = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const bounds = event.currentTarget.getBoundingClientRect();
+      void toggleTheme({
+        origin: {
+          x: bounds.left + bounds.width / 2,
+          y: bounds.top + bounds.height / 2,
+        },
+      });
+    },
+    [toggleTheme]
+  );
 
   return (
     <Button
+      aria-label="Toggle color theme"
       variant="ghost"
-      className="group/toggle h-8 w-8 px-0 text-primary"
-      onClick={toggleTheme}
+      className="relative h-8 w-8 overflow-hidden px-0 text-primary"
+      onClick={handleThemeToggle}
+      title="Toggle color theme"
+      type="button"
     >
-      <Sun className="hidden [html.dark_&]:block" />
-      <Moon className="hidden [html.light_&]:block" />
-      <span className="sr-only">Toggle theme</span>
+      <Sun aria-hidden="true" className="theme-icon theme-icon-sun" />
+      <Moon aria-hidden="true" className="theme-icon theme-icon-moon" />
     </Button>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { About } from "@/components/sections/about";
+import { PointerGrid } from "@/components/pointer-grid";
 import { Education } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
 import { Footer } from "@/components/sections/footer";
@@ -10,18 +11,24 @@ import { Projects } from "@/components/sections/projects";
 import { Socials } from "@/components/sections/socials";
 import { SpotifyNowPlaying } from "@/components/sections/spotify";
 import { TechStack } from "@/components/sections/tech-stack";
+import { ViewportReveals } from "@/components/viewport-reveals";
 import { RESUME_DATA } from "@/constants/resume";
 
 export default function Home() {
   return (
     <>
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] bg-size-[24px_24px] dark:bg-[radial-gradient(#4b5563_1px,transparent_1px)] opacity-[0.6] dark:opacity-[0.4] mask-[linear-gradient(to_bottom,white,transparent)]"></div>
-      </div>
-      <main className="relative z-10 w-full max-w-[700px] space-y-12">
-        <Header />
+      <ViewportReveals />
+      <PointerGrid />
+      <main
+        className="relative z-10 w-full max-w-[700px] space-y-12"
+        id="top"
+      >
+        <Header
+          email={RESUME_DATA.email}
+          githubUrl={RESUME_DATA.socials.github}
+        />
         <Hero data={RESUME_DATA} />
-        <div className="space-y-3 animate-fade-in delay-200">
+        <div className="space-y-3" data-reveal>
           <Socials socials={RESUME_DATA.socials} />
           <SpotifyNowPlaying />
         </div>

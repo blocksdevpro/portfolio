@@ -8,7 +8,7 @@ interface SocialsProps {
 
 export const Socials: React.FC<SocialsProps> = ({ socials }) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 animate-fade-in delay-200">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
       {socials.github && (
         <a
           href={socials.github}

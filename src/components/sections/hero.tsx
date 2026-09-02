@@ -39,11 +39,8 @@ export const Hero: React.FC<HeroProps> = ({ data }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Derive current company safely
-  const currentCompany = "";
-
   return (
-    <section className="animate-fade-in space-y-8 delay-100">
+    <section id="intro" className="space-y-8" data-reveal>
       {/* Top Section: Profile Header */}
       <div className="flex flex-col-reverse sm:flex-row items-start justify-between gap-8 sm:gap-12">
         <div className="flex-1 flex flex-col gap-4">

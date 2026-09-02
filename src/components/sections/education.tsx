@@ -13,7 +13,9 @@ export const Education: React.FC<EducationProps> = ({
 }) => {
   return (
     <div
-      className={`grid grid-cols-1 gap-8 animate-fade-in delay-700 ${
+      id="education"
+      data-reveal
+      className={`grid grid-cols-1 gap-8 ${
         languages.length > 0 ? "sm:grid-cols-2" : ""
       }`}
     >

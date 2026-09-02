@@ -124,7 +124,7 @@ const DEFAULT_SKILL: SkillConfig = {
 
 export const TechStack: React.FC<TechStackProps> = ({ skills }) => {
   return (
-    <section className="space-y-4 animate-fade-in delay-400">
+    <section id="stack" className="space-y-4" data-reveal>
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Stack</h2>
         <span className="font-mono text-xs text-muted-foreground">

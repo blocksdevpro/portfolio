@@ -53,7 +53,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({ project }) => {
           </p>
           <div className="flex items-start gap-2.5">
             <ProjectMark icon={project.icon} title={project.title} />
-            <h3 className="text-base font-semibold leading-snug tracking-tight text-foreground transition-colors duration-200 group-hover:text-blue-500 sm:text-lg">
+            <h3 className="text-base font-semibold leading-snug tracking-tight text-foreground">
               {project.title}
             </h3>
           </div>
@@ -105,7 +105,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({ project }) => {
             >
               <ArrowRight
                 aria-hidden="true"
-                className="mt-1 size-3 shrink-0 text-border transition-colors group-hover:text-blue-500"
+                className="mt-1 size-3 shrink-0 text-muted-foreground/45 transition-[color,transform] duration-200 group-hover:translate-x-0.5 group-hover:text-muted-foreground"
                 weight="bold"
               />
               <span>{highlight}</span>
@@ -133,7 +133,7 @@ const ProjectEntry: React.FC<ProjectEntryProps> = ({ project }) => {
 
 export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
   return (
-    <section id="projects" className="space-y-6 animate-fade-in delay-600">
+    <section id="projects" className="space-y-6" data-reveal>
       <h2 className="text-xl font-bold text-foreground">Projects</h2>
 
       <div className="border-t border-border">
