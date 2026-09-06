@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Uttam Kumbhakar's portfolio
 
-## Getting Started
+The portfolio at [blocksdev.pro](https://blocksdev.pro), built with Next.js, React, TypeScript, and Tailwind CSS. The homepage introduces Uttam's Rust and backend work, with live links to [Boris](https://boris.blocksdev.pro) and [Calorine](https://calorine.in).
 
-First, run the development server:
+Run the local app with Bun:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000). If a development server already runs in this workspace, reuse it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edit profile, project descriptions, links, experience, and education in `src/constants/resume.ts`. The page composition is in `src/app/page.tsx`. Shared visual tokens and component styles are in `src/app/globals.css`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The page renders static content on the server. Interactive components handle the command menu, themes, local time, clipboard actions, and activity widgets. The native project disclosures and ordinary links also work without JavaScript.
 
-## Learn More
+GitHub activity comes through `/api/contributions`. The route validates calendar dates, caches the provider response for an hour, and returns an explicit unavailable state on failure. The graph's date slider exposes daily details to keyboard and touch users.
 
-To learn more about Next.js, take a look at the following resources:
+The music widget uses Last.fm recent tracks and links to Spotify search. Set `LASTFM_API_KEY` and `LASTFM_USERNAME` in `.env.local`, using `.env.example` as a guide. Credentials stay in the server route. Missing configuration or a failed request produces an unavailable state. Polling pauses when the page is hidden.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The portrait and the actual Boris desktop screenshot are local WebP files under `public/`. The screenshot came from `blocksdevpro/boris-assistant/website/public/boris-screenshot.png`. Calorine's architecture illustration follows its repository's documented stack.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Run the checks:
 
-## Deploy on Vercel
+```bash
+bun run lint
+bunx tsc --noEmit
+bun run verify:interactions
+bun run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+With the app running, check the rendered page, assets, metadata, and live API routes:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+bun run verify:site
+# Use another running instance if needed:
+SITE_URL=http://localhost:3100 bun run verify:site
+```
+
+`verify:interactions` executes the actual navigation and data parsing modules. It covers sticky-header offsets, focus transfer, reduced motion, browser history, calendar alignment, and malformed external data. `verify:site` checks HTTP responses from the running application. Neither replaces a browser review of layout, focus trapping, or animation.
+
+The remaining visual review is described in `PORTFOLIO-OVERHAUL-PLAN.md`. Check desktop and mobile layouts in both themes, keyboard navigation, command-menu focus restoration, copy feedback, and reduced motion before deployment.

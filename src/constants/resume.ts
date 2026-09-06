@@ -1,13 +1,14 @@
-import { ResumeData } from "@/types/resume";
+import type { ResumeData } from "@/types/resume";
 
 export const RESUME_DATA: ResumeData = {
   name: "Uttam Kumbhakar",
   title: "Rust Backend Developer",
-  description: "Rust · Async backend systems · Local AI applications",
-  avatar:
-    "https://40ar4rk0hv.ufs.sh/f/9Pu2ZyQIW8BFkxw2CxtHqGNu7tCzy62FwhZjiv9UlmR30p15",
+  description:
+    "I build async backend systems, local AI applications, and developer tools.",
+  avatar: "/portrait.webp",
 
   location: "Jharkhand, India",
+  timezone: "Asia/Kolkata",
   email: "mail@blocksdev.pro",
   website: "https://blocksdev.pro",
   summary:
@@ -52,15 +53,24 @@ export const RESUME_DATA: ResumeData = {
   ],
   projects: [
     {
-      title: "Boris — Local-First AI Voice Assistant",
+      id: "boris",
+      title: "Boris",
+      subtitle: "A voice assistant for your desktop",
       date: "2026",
-      icon: "🎙️",
+      media: {
+        kind: "screenshot",
+        src: "/projects/boris.webp",
+        alt: "Boris desktop with a voice conversation and its floating voice overlay.",
+        width: 1600,
+        height: 1199,
+      },
       description:
-        "A local-first AI voice assistant for Windows with wake-word detection, speech recognition, LLM-driven tools, and speech synthesis. Superteam Grant recipient ($200 USDG).",
+        "A Rust-powered Windows assistant with local speech recognition, natural voice replies, and tools that ask before taking sensitive actions.",
       highlights: [
         "Modular multi-crate Rust architecture for audio, inference, agent runtime, and desktop integration.",
         "Agent capabilities including tools, sessions, memory, search, and approval-controlled shell execution.",
-        "Shipped as a Tauri v2 Windows desktop app with local inference and in-app updates.",
+        "Local wake-word detection, Parakeet speech recognition, and Supertone speech output. Language models connect through OpenRouter.",
+        "Shipped as a Tauri v2 Windows desktop app with signed in-app updates. Superteam Grant recipient ($200 USDG).",
       ],
       tech: [
         "Rust",
@@ -78,11 +88,13 @@ export const RESUME_DATA: ResumeData = {
       },
     },
     {
-      title: "Calorine API — Calorie Tracking & Fitness Backend",
+      id: "calorine",
+      title: "Calorine API",
+      subtitle: "The backend behind better habits",
       date: "2026",
-      icon: "🥗",
+      media: { kind: "architecture" },
       description:
-        "A production-grade REST API for calorie tracking and fitness, with secure authentication, image storage, and AI-powered meal analysis.",
+        "A Rust backend for calorie tracking and fitness, with secure authentication, image storage, and AI-powered meal analysis.",
       highlights: [
         "Google OAuth 2.0 and JWT authentication with CSRF protection and secure session handling.",
         "AI-powered meal analysis pipeline using Cloudflare R2 and multimodal LLM inference.",
@@ -97,9 +109,10 @@ export const RESUME_DATA: ResumeData = {
         "JWT",
         "Google OAuth 2.0",
         "Cloudflare R2",
-        "OpenAI API",
+        "OpenRouter",
       ],
       links: {
+        production: "https://calorine.in",
         github: "https://github.com/blocksdevpro/rust-backend",
       },
     },

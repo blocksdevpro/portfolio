@@ -7,11 +7,21 @@ export interface Experience {
 }
 
 export interface Project {
+  id: string;
   title: string;
+  subtitle: string;
   date: string;
   description: string;
   tech: string[];
-  icon?: string; // NEW: emoji or text icon
+  media:
+    | {
+        kind: "screenshot";
+        src: string;
+        alt: string;
+        width: number;
+        height: number;
+      }
+    | { kind: "architecture" };
   links?: {
     production?: string;
     github?: string;
@@ -35,6 +45,7 @@ export interface ResumeData {
   description: string;
   avatar: string;
   location: string;
+  timezone: string;
   email: string;
   website: string;
   summary: string;

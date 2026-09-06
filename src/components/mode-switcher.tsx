@@ -19,14 +19,14 @@ export function ModeSwitcher() {
         },
       });
     },
-    [toggleTheme]
+    [toggleTheme],
   );
 
   return (
     <Button
       aria-label="Toggle color theme"
       variant="ghost"
-      className="relative h-8 w-8 overflow-hidden px-0 text-primary"
+      className="relative h-11 w-11 overflow-hidden px-0 text-muted-foreground"
       onClick={handleThemeToggle}
       title="Toggle color theme"
       type="button"

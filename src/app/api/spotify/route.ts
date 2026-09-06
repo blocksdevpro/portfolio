@@ -1,64 +1,31 @@
 import { NextResponse } from "next/server";
-
-const LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/";
-const api_key = process.env.LASTFM_API_KEY!;
-const username = process.env.LASTFM_USERNAME!;
-
-interface LastFmImage {
-  size: string;
-  "#text": string;
-}
-
-interface LastFmTrack {
-  name: string;
-  artist: { "#text": string };
-  album: { "#text": string };
-  image: LastFmImage[];
-  url: string;
-  "@attr"?: { nowplaying: string };
-}
+import { parseLastFm } from "@/lib/widget-data";
 
 export async function GET() {
+  const apiKey = process.env.LASTFM_API_KEY;
+  const username = process.env.LASTFM_USERNAME;
+  if (!apiKey || !username) return NextResponse.json({ kind: "unavailable" });
+  const url = new URL("https://ws.audioscrobbler.com/2.0/");
+  url.search = new URLSearchParams({
+    method: "user.getrecenttracks",
+    user: username,
+    api_key: apiKey,
+    format: "json",
+    limit: "1",
+  }).toString();
   try {
-    const res = await fetch(
-      `${LASTFM_API_URL}?method=user.getrecenttracks&user=${username}&api_key=${api_key}&format=json&limit=1`,
-      { cache: "no-store" }
-    );
-
-    if (!res.ok) {
-      console.error("[LastFM] API error:", res.status);
-      return NextResponse.json({ isPlaying: false });
-    }
-
-    const data = await res.json();
-    const tracks: LastFmTrack[] = data.recenttracks?.track;
-
-    if (!tracks || tracks.length === 0) {
-      return NextResponse.json({ isPlaying: false });
-    }
-
-    const track = tracks[0];
-    const isPlaying = track["@attr"]?.nowplaying === "true";
-
-    // Get the largest available image
-    const albumArt =
-      track.image?.find((img) => img.size === "extralarge")?.["#text"] ||
-      track.image?.find((img) => img.size === "large")?.["#text"] ||
-      "";
-
-    // Link to Spotify search for this track
-    const spotifySearchUrl = `https://open.spotify.com/search/${encodeURIComponent(`${track.name} ${track.artist["#text"]}`)}`;
-
-    return NextResponse.json({
-      isPlaying,
-      title: track.name,
-      artist: track.artist["#text"],
-      album: track.album["#text"],
-      albumArt: albumArt || undefined,
-      trackUrl: spotifySearchUrl,
+    const response = await fetch(url, {
+      next: { revalidate: 30 },
+      signal: AbortSignal.timeout(6000),
     });
-  } catch (error) {
-    console.error("[LastFM] API error:", error);
-    return NextResponse.json({ isPlaying: false });
+    if (!response.ok)
+      return NextResponse.json({ kind: "unavailable" }, { status: 502 });
+    const data: unknown = await response.json();
+    const music = parseLastFm(data);
+    return NextResponse.json(music, {
+      status: music.kind === "unavailable" ? 502 : 200,
+    });
+  } catch {
+    return NextResponse.json({ kind: "unavailable" }, { status: 502 });
   }
 }

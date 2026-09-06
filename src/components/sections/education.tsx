@@ -1,75 +1,35 @@
-import React from "react";
-import { GraduationCap, Translate } from "@phosphor-icons/react";
-import { ResumeData } from "@/types/resume";
+import { GraduationCap } from "@phosphor-icons/react/dist/ssr";
+import { SectionHeading } from "@/components/section-heading";
+import type { ResumeData } from "@/types/resume";
 
-interface EducationProps {
-  education: ResumeData["education"];
-  languages: ResumeData["languages"];
-}
-
-export const Education: React.FC<EducationProps> = ({
+export function Education({
   education,
   languages,
-}) => {
+}: Pick<ResumeData, "education" | "languages">) {
   return (
-    <div
-      id="education"
-      data-reveal
-      className={`grid grid-cols-1 gap-8 ${
-        languages.length > 0 ? "sm:grid-cols-2" : ""
-      }`}
-    >
-      <section className="space-y-6">
-        <h2 className="text-xl font-bold text-foreground">
-          Education
-        </h2>
-        <div className="space-y-4">
-          {education.map((edu, idx) => (
-            <div key={idx} className="flex justify-between items-start">
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-                  <GraduationCap className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground">
-                    {edu.school}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">{edu.degree}</p>
-                </div>
-              </div>
-              <span className="text-xs text-muted-foreground font-mono text-right ml-2">
-                {edu.year}
-              </span>
+    <section id="education" className="portfolio-section" tabIndex={-1}>
+      <SectionHeading number="05">Education</SectionHeading>
+      <div className="section-inset section-body">
+        {education.map((edu) => (
+          <div className="education-entry" key={edu.school}>
+            <span className="entry-icon">
+              <GraduationCap size={20} aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <h3>{edu.school}</h3>
+              <p>{edu.degree}</p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {languages.length > 0 && (
-        <section className="space-y-6">
-          <h2 className="text-xl font-bold text-foreground">Languages</h2>
-          <div className="space-y-4">
-            {languages.map((lang, idx) => (
-              <div
-                key={idx}
-                className="flex justify-between items-center border-b pb-2 last:border-0"
-              >
-                <div className="flex gap-3 items-center">
-                  <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-                    <Translate className="w-4 h-4" />
-                  </div>
-                  <h3 className="text-sm font-medium text-foreground">
-                    {lang.language}
-                  </h3>
-                </div>
-                <span className="text-xs text-muted-foreground font-mono">
-                  {lang.level}
-                </span>
-              </div>
-            ))}
+            <span className="entry-date">{edu.year}</span>
           </div>
-        </section>
-      )}
-    </div>
+        ))}
+        {languages.length > 0 && (
+          <p className="mt-5 text-sm text-muted-foreground">
+            {languages
+              .map((item) => item.language + " · " + item.level)
+              .join(" / ")}
+          </p>
+        )}
+      </div>
+    </section>
   );
-};
+}
