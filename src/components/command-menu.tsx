@@ -245,9 +245,9 @@ export function CommandMenu({
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45 backdrop-blur-[3px] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/20 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
         <Dialog.Content
-          className="command-panel fixed left-1/2 top-[10dvh] z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl outline-none sm:top-[18vh]"
+          className="command-panel fixed left-1/2 top-[10dvh] z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden border text-popover-foreground shadow-2xl outline-none sm:top-[18vh]"
           data-slot="command-content"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
@@ -262,10 +262,10 @@ export function CommandMenu({
             Search sections, projects, and site actions. Use the arrow keys to
             select an action and Enter to run it.
           </Dialog.Description>
-          <div className="flex items-center gap-3 border-b px-4">
+          <div className="flex items-center gap-2 px-4">
             <MagnifyingGlass
               className="text-muted-foreground"
-              size={18}
+              size={16}
               aria-hidden="true"
             />
             <input
@@ -282,8 +282,8 @@ export function CommandMenu({
                 setQuery(event.target.value);
                 setSelected(0);
               }}
-              placeholder="Where would you like to go?"
-              className="h-16 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              placeholder="Type a command or search..."
+              className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               onKeyDown={(event) => {
                 if (event.key === "ArrowDown" || event.key === "ArrowUp") {
                   event.preventDefault();
@@ -306,9 +306,9 @@ export function CommandMenu({
               <button
                 type="button"
                 aria-label="Close command menu"
-                className="flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+                className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
               >
-                <X size={17} aria-hidden="true" />
+                <X size={14} aria-hidden="true" />
               </button>
             </Dialog.Close>
           </div>
@@ -316,14 +316,14 @@ export function CommandMenu({
             id={listId}
             role="listbox"
             aria-label="Quick actions"
-            className="command-results h-[min(420px,48dvh)] overflow-y-auto p-2"
+            className="command-results h-[min(320px,48dvh)] overflow-y-auto p-1"
           >
             {filtered.map((command, index) => (
               <div key={command.id}>
                 {(index === 0 ||
                   filtered[index - 1].group !== command.group) && (
                   <div className="command-group" aria-hidden="true">
-                    {command.group}
+                    {command.group === "Navigate" ? "Menu" : command.group}
                   </div>
                 )}
                 <div
@@ -331,30 +331,25 @@ export function CommandMenu({
                   role="option"
                   aria-selected={selected === index}
                   data-selected={selected === index}
-                  className="command-option flex cursor-pointer items-center gap-3 rounded-md px-3 py-3 data-[selected=true]:bg-muted"
+                  className="command-option flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-2 py-2"
                   onMouseDown={(event) => event.preventDefault()}
                   onMouseEnter={() => setSelected(index)}
                   onClick={() => void execute(command)}
                 >
                   <span
-                    className="flex size-8 items-center justify-center rounded-md border bg-background text-muted-foreground [&_svg]:size-4"
+                    className="flex size-4 items-center justify-center text-muted-foreground [&_svg]:size-4"
                     aria-hidden="true"
                   >
                     {command.icon}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm">{command.label}</span>
-                    <span className="block truncate text-xs text-muted-foreground">
-                      {command.description}
-                    </span>
+                    <span className="block truncate text-sm leading-5">{command.label}</span>
                   </span>
-                  {index === selected && (
-                    <kbd
-                      className="text-xs text-muted-foreground"
-                      aria-hidden="true"
-                    >
-                      ↵
-                    </kbd>
+                  {command.action.kind === "external" && (
+                    <ArrowUpRight size={14} className="text-muted-foreground" aria-hidden="true" />
+                  )}
+                  {command.action.kind === "theme" && theme === command.action.preference && (
+                    <Check size={14} className="text-muted-foreground" aria-label="Current preference" />
                   )}
                 </div>
               </div>
@@ -366,13 +361,20 @@ export function CommandMenu({
               </div>
             )}
           </div>
-          <div className="flex flex-wrap gap-2 justify-between border-t px-4 py-3 font-mono text-xs text-muted-foreground">
-            <span>↑ ↓ to navigate</span>
-            <span>
+          <div className="flex h-10 items-center justify-between gap-2 px-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1" aria-label="Use arrow keys to navigate">
+              <kbd className="command-key">↑</kbd>
+              <kbd className="command-key">↓</kbd>
+            </span>
+            <span className="flex items-center gap-2 font-medium text-foreground">
               {selectedCommand
-                ? `Enter to ${selectedCommand.action.kind === "copy" ? "copy" : selectedCommand.action.kind === "theme" ? "apply" : "open"} · `
-                : ""}
-              Esc to close
+                ? selectedCommand.action.kind === "copy"
+                  ? "Copy email"
+                  : selectedCommand.action.kind === "theme"
+                    ? "Enter to apply"
+                    : "Go to page"
+                : "Esc to close"}
+              <kbd className="command-key" aria-hidden="true">{selectedCommand ? "↵" : "esc"}</kbd>
             </span>
           </div>
           {copyStatus === "failed" && (

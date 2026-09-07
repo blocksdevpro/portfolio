@@ -245,6 +245,7 @@ html,
   align-items: center;
   min-height: 44px;
   font-size: 14px;
+  font-weight: 500;
   position: relative;
   color: var(--muted-foreground);
 }
@@ -1480,13 +1481,19 @@ button:active,
   font-size: 12px;
 }
 .command-panel {
+  border-radius: 16px;
+  border-color: color-mix(in srgb, var(--border) 80%, var(--muted-foreground));
+  background: color-mix(in srgb, var(--card) 70%, var(--muted));
   animation: command-in 180ms var(--ease-out);
 }
 .command-panel[data-state="closed"] {
   animation: command-out 120ms ease-in;
 }
 .command-results {
-  scrollbar-gutter: stable;
+  margin-inline: 3px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--background);
   overscroll-behavior: contain;
 }
 @keyframes command-in {
@@ -1506,14 +1513,29 @@ button:active,
   }
 }
 .command-group {
-  padding: 8px 12px 5px;
-  font:
-    11px/1.6 var(--font-jetbrains-mono),
-    monospace;
+  padding: 10px 8px 7px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
   color: var(--muted-foreground);
 }
 .command-option {
   transition: background-color 90ms;
+}
+.command-option[data-selected="true"] {
+  background: color-mix(in srgb, var(--muted) 88%, var(--muted-foreground));
+}
+.command-key {
+  display: inline-flex;
+  min-width: 23px;
+  height: 21px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 11px;
 }
 .activity-months {
   display: grid;
