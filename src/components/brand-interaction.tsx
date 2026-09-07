@@ -27,8 +27,10 @@ export function BrandInteraction({ children }: { children: React.ReactNode }) {
     const tick = () => {
       x += (targetX - x) * 0.18;
       y += (targetY - y) * 0.18;
-      gradient?.setAttribute("cx", String(x * 7.2));
-      gradient?.setAttribute("cy", String(y * 1.76));
+      if (drawing) {
+        gradient?.setAttribute("cx", String(x * drawing.viewBox.baseVal.width / 100));
+        gradient?.setAttribute("cy", String(y * drawing.viewBox.baseVal.height / 100));
+      }
       if (Math.abs(targetX - x) + Math.abs(targetY - y) > 0.05)
         frame = requestAnimationFrame(tick);
       else frame = 0;

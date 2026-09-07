@@ -8,8 +8,8 @@ import { ModeSwitcher } from "@/components/mode-switcher";
 import { scrollToSection, type SectionHash } from "@/lib/scroll-to-section";
 
 const links = [
-  { id: "projects", label: "Work", href: "#projects" },
   { id: "about", label: "About", href: "#about" },
+  { id: "projects", label: "Work", href: "#projects" },
   { id: "contact", label: "Contact", href: "#contact" },
 ] satisfies { id: string; label: string; href: SectionHash }[];
 

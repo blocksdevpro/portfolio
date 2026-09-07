@@ -36,9 +36,21 @@ for (const width of [360, 390, 768, 1280, 1440]) {
       await widgets(page);
       await page.goto("/");
       await expect(
-        page.getByRole("slider", { name: "Explore dates" }),
+        page.getByRole("region", { name: /Contribution graph/ }),
       ).toBeVisible();
       await expect(page.locator("html")).toHaveClass(new RegExp(colorScheme));
+      const artwork = await page.locator("#brand-geometry").boundingBox();
+      const cover = await page.locator(".brand-illustration").boundingBox();
+      const name = await page.locator(".hero-name").boundingBox();
+      expect(artwork).not.toBeNull();
+      expect(cover).not.toBeNull();
+      expect(name).not.toBeNull();
+      if (artwork && cover && name) {
+        expect(artwork.x).toBeGreaterThanOrEqual(cover.x);
+        expect(artwork.x + artwork.width).toBeLessThanOrEqual(cover.x + cover.width);
+        expect(artwork.y).toBeGreaterThanOrEqual(cover.y);
+        expect(artwork.y + artwork.height).toBeLessThanOrEqual(name.y);
+      }
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth,
@@ -197,7 +209,54 @@ test("denied clipboard stays honest in contact and command menu", async ({
   await expect(page.getByRole("option")).toContainText("Copy email");
 });
 
-test("activity selection scrolls within the graph and long music wraps", async ({
+test("contribution tooltips show each day's actual count and date", async ({ page }, testInfo) => {
+  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+  await widgets(page);
+  await page.goto("/#activity");
+  const zero = page.getByRole("button", { name: "0 contributions on 7 Sept 2025", exact: true });
+  await zero.hover();
+  await expect(page.getByRole("tooltip")).toContainText("0 contributions");
+  await expect(page.getByRole("tooltip")).toContainText("7 Sept 2025");
+  await expect(page.locator(".activity-tooltip")).toHaveCSS("background-color", "rgb(18, 18, 20)");
+  await expect(page.locator(".activity-tooltip")).toHaveCSS("opacity", "1");
+  const one = page.getByRole("button", { name: "1 contribution on 8 Sept 2025", exact: true });
+  await one.hover();
+  await expect(page.getByRole("tooltip")).toContainText("1 contribution");
+  await expect(page.getByRole("tooltip")).toContainText("8 Sept 2025");
+  await page.screenshot({ path: testInfo.outputPath("contribution-tooltip.png") });
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await zero.focus();
+  await zero.press("End");
+  const last = page.getByRole("button", { name: "4 contributions on 6 Sept 2026", exact: true });
+  await expect(last).toBeFocused();
+  await expect(page.getByRole("tooltip")).toContainText("6 Sept 2026");
+  await last.press("ArrowUp");
+  await expect(page.getByRole("tooltip")).toContainText("3 contributions");
+  await expect(page.getByRole("tooltip")).toContainText("5 Sept 2026");
+});
+
+test("contribution tooltips open on touch and stay within the viewport", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 360, height: 800 }, hasTouch: true, isMobile: true, colorScheme: "light" });
+  const page = await context.newPage();
+  await widgets(page);
+  await page.goto(process.env.SITE_URL || "http://localhost:3000");
+  const last = page.getByRole("button", { name: "4 contributions on 6 Sept 2026", exact: true });
+  await last.tap();
+  await expect(page.getByRole("tooltip")).toContainText("4 contributions");
+  await expect(page.locator(".activity-tooltip")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  const bounds = await page.locator(".activity-tooltip").boundingBox();
+  expect(bounds).not.toBeNull();
+  if (bounds) {
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(360);
+  }
+  await page.getByRole("heading", { name: "A little about me" }).tap();
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await context.close();
+});
+
+test("activity scrolls with the keyboard and long music wraps", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 800 });
@@ -215,17 +274,18 @@ test("activity selection scrolls within the graph and long music wraps", async (
     },
   );
   await page.goto("/#activity");
-  const slider = page.getByRole("slider", { name: "Explore dates" });
-  await slider.focus();
-  await slider.press("Home");
-  await expect(slider).toHaveAttribute("aria-valuetext", /Sep 7, 2025/);
+  const graph = page.getByRole("region", { name: /Contribution graph/ });
+  await expect(graph).toBeVisible();
+  await expect(page.getByRole("slider")).toHaveCount(0);
+  await expect.poll(() => graph.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0);
+  const initialScroll = await graph.evaluate((el) => el.scrollLeft);
+  await graph.focus();
+  await graph.press("ArrowLeft");
   await expect
     .poll(() =>
-      page.locator(".activity-scroll").evaluate((el) => el.scrollLeft),
+      graph.evaluate((el) => el.scrollLeft),
     )
-    .toBe(0);
-  await slider.press("End");
-  await expect(slider).toHaveAttribute("aria-valuetext", /Sep 6, 2026/);
+    .toBeLessThan(initialScroll);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

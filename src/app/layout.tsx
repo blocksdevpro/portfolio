@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Caveat, Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,6 +9,13 @@ const interSans = Inter({
   variable: "--font-inter-sans",
   subsets: ["latin"],
   display: "optional",
+});
+
+const handwriting = Caveat({
+  variable: "--font-handwriting",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -43,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${interSans.variable} ${jetbrainsMono.variable} font-sans antialiased min-h-screen`}
+        className={`${interSans.variable} ${jetbrainsMono.variable} ${handwriting.variable} font-sans antialiased min-h-screen`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <a href="#main" className="skip-link">

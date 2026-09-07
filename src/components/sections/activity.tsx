@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SectionHeading } from "@/components/section-heading";
+import { Tooltip } from "radix-ui";
 import { RESUME_DATA } from "@/constants/resume";
 import { parseContributions, type ActivityData } from "@/lib/widget-data";
 
@@ -9,20 +9,9 @@ export function Activity() {
   const [activity, setActivity] = useState<ActivityData | { kind: "loading" }>({
     kind: "loading",
   });
-  const [selected, setSelected] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = scrollRef.current;
-    const cell = container?.querySelector('[data-selected="true"]');
-    if (!container || !cell) return;
-    const frame = container.getBoundingClientRect();
-    const bounds = cell.getBoundingClientRect();
-    if (bounds.left < frame.left + 4)
-      container.scrollLeft += bounds.left - frame.left - 4;
-    else if (bounds.right > frame.right - 4)
-      container.scrollLeft += bounds.right - frame.right + 4;
-  }, [selected]);
+  const [openDate, setOpenDate] = useState<string | null>(null);
+  const [focusedDate, setFocusedDate] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -35,8 +24,6 @@ export function Activity() {
         const parsed = parseContributions(value);
         if (!controller.signal.aborted) {
           setActivity(parsed);
-          if (parsed.kind === "ready")
-            setSelected(Math.max(0, parsed.days.length - 1));
         }
       } catch {
         if (!controller.signal.aborted) setActivity({ kind: "unavailable" });
@@ -51,17 +38,6 @@ export function Activity() {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
   }, [activity]);
 
-  const day = activity.kind === "ready" ? activity.days[selected] : undefined;
-  const detail = day
-    ? day.count +
-      (day.count === 1 ? " contribution on " : " contributions on ") +
-      new Intl.DateTimeFormat("en", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        timeZone: "UTC",
-      }).format(new Date(day.date + "T00:00:00Z"))
-    : "";
   const first = activity.kind === "ready" ? activity.days[0] : undefined;
   const padding = first ? new Date(first.date + "T00:00:00Z").getUTCDay() : 0;
   const last = activity.kind === "ready" ? activity.days.at(-1) : undefined;
@@ -96,9 +72,7 @@ export function Activity() {
       className="portfolio-section"
       aria-label="GitHub activity"
     >
-      <SectionHeading number="04" detail="GitHub activity">
-        Building in public
-      </SectionHeading>
+      <h2 className="sr-only">GitHub activity</h2>
       <div className="activity-body section-inset">
         {activity.kind === "loading" && (
           <div className="widget-unavailable" role="status">
@@ -151,21 +125,63 @@ export function Activity() {
                   </span>
                 ))}
               </div>
-              <div className="activity-grid" aria-hidden="true">
+              <Tooltip.Provider delayDuration={100} skipDelayDuration={300} disableHoverableContent>
+              <div className="activity-grid">
                 {Array.from({ length: padding }, (_, index) => (
-                  <span key={"pad-" + index} />
+                  <span key={"pad-" + index} aria-hidden="true" />
                 ))}
                 {activity.days.map((entry, index) => (
-                  <span
+                  <Tooltip.Root
                     key={entry.date}
-                    className="activity-day"
-                    data-level={entry.level}
-                    data-selected={index === selected}
-                    onPointerEnter={() => setSelected(index)}
-                    title={entry.date + ": " + entry.count + " contributions"}
-                  />
+                    open={openDate === entry.date}
+                    onOpenChange={(open) => setOpenDate((current) =>
+                      open ? entry.date : current === entry.date ? null : current
+                    )}
+                  >
+                    <Tooltip.Trigger asChild>
+                      <button
+                        type="button"
+                        className="activity-day"
+                        data-level={entry.level}
+                        data-date={entry.date}
+                        tabIndex={focusedDate === entry.date || (!focusedDate && index === activity.days.length - 1) ? 0 : -1}
+                        aria-label={`${entry.count} ${entry.count === 1 ? "contribution" : "contributions"} on ${dateLabel(entry.date)}`}
+                        onFocus={() => setFocusedDate(entry.date)}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          setOpenDate(entry.date);
+                        }}
+                        onKeyDown={(event) => {
+                          let next = index;
+                          switch (event.key) {
+                            case "ArrowLeft": next -= 7; break;
+                            case "ArrowRight": next += 7; break;
+                            case "ArrowUp": next -= 1; break;
+                            case "ArrowDown": next += 1; break;
+                            case "Home": next = 0; break;
+                            case "End": next = activity.days.length - 1; break;
+                            default: return;
+                          }
+                          event.preventDefault();
+                          const target = activity.days[Math.max(0, Math.min(next, activity.days.length - 1))];
+                          if (!target) return;
+                          const button = scrollRef.current?.querySelector<HTMLButtonElement>(`[data-date="${target.date}"]`);
+                          button?.focus({ preventScroll: true });
+                          button?.scrollIntoView({ block: "nearest", inline: "nearest" });
+                        }}
+                      />
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content className="activity-tooltip" sideOffset={8} collisionPadding={12}>
+                        <strong>{entry.count} {entry.count === 1 ? "contribution" : "contributions"}</strong>
+                        <span>{dateLabel(entry.date)}</span>
+                        <Tooltip.Arrow className="activity-tooltip-arrow" width={10} height={5} />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
                 ))}
               </div>
+              </Tooltip.Provider>
             </div>
             <p className="activity-scroll-hint">
               Scroll the graph to see earlier months{" "}
@@ -207,20 +223,6 @@ export function Activity() {
                 <span>More</span>
               </div>
             </div>
-            <label className="activity-controls">
-              <span>Explore dates</span>
-              <input
-                type="range"
-                min={0}
-                max={Math.max(0, activity.days.length - 1)}
-                value={selected}
-                onChange={(event) => setSelected(Number(event.target.value))}
-                aria-valuetext={detail}
-              />
-            </label>
-            <p className="activity-detail">
-              <output>{detail}</output>
-            </p>
           </>
         )}
         <noscript>

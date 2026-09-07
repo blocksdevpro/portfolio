@@ -8,7 +8,7 @@ export function Education({
 }: Pick<ResumeData, "education" | "languages">) {
   return (
     <section id="education" className="portfolio-section" tabIndex={-1}>
-      <SectionHeading number="05">Education</SectionHeading>
+      <SectionHeading number="03">Education</SectionHeading>
       <div className="section-inset section-body">
         {education.map((edu) => (
           <div className="education-entry" key={edu.school}>

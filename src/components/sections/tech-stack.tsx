@@ -31,9 +31,9 @@ export function TechStack({ skills }: { skills: string[] }) {
       className="stack-section section-inset"
       aria-labelledby="stack-heading"
     >
-      <h3 id="stack-heading" className="eyebrow">
+      <h2 id="stack-heading" className="eyebrow">
         TOOLS I WORK WITH
-      </h3>
+      </h2>
       <dl className="stack-table">
         {rows.map((group) => (
           <div key={group.label}>

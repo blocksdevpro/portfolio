@@ -4,7 +4,7 @@ export const RESUME_DATA: ResumeData = {
   name: "Uttam Kumbhakar",
   title: "Rust Backend Developer",
   description:
-    "I build async backend systems, local AI applications, and developer tools.",
+    "I build backend systems in Rust, local AI apps, and developer tools.",
   avatar: "/portrait.webp",
 
   location: "Jharkhand, India",

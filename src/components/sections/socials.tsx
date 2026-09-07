@@ -1,5 +1,4 @@
 import {
-  ArrowUpRight,
   GithubLogo,
   LinkedinLogo,
   XLogo,
@@ -15,10 +14,8 @@ export function Socials({ socials }: { socials: ResumeData["socials"] }) {
   return (
     <nav className="social-strip" aria-label="Social profiles">
       {links.map(({ label, url, Icon }) => (
-        <a key={label} href={url} target="_blank" rel="noopener noreferrer">
-          <Icon size={17} aria-hidden="true" />
-          <span>{label}</span>
-          <ArrowUpRight className="social-arrow" size={14} aria-hidden="true" />
+        <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}>
+          <Icon size={20} aria-hidden="true" />
         </a>
       ))}
     </nav>

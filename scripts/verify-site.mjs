@@ -33,8 +33,8 @@ assert.ok(
   "Selected work must precede experience",
 );
 assert.ok(
-  main.indexOf('id="projects"') < main.indexOf('id="about"'),
-  "Selected work must precede About",
+  main.indexOf('id="about"') < main.indexOf('id="projects"'),
+  "About must introduce the selected work",
 );
 assert.equal(
   (html.match(/<details\b/g) || []).length,
