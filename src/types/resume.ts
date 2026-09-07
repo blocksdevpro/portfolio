@@ -9,28 +9,31 @@ export interface Experience {
 export interface Project {
   id: string;
   title: string;
+  category: string;
   subtitle: string;
   date: string;
+  status: "active" | "archived";
   description: string;
   tech: string[];
-  media:
-    | {
-        kind: "screenshot";
-        src: string;
-        alt: string;
-        width: number;
-        height: number;
-      }
-    | { kind: "architecture" };
+  summaryHighlights: [string, string];
+  media: {
+    kind: "architecture";
+    layout: "pipeline" | "branches";
+    title: string;
+    context: string;
+    nodes: {
+      title: string;
+      detail: string;
+      icon: "microphone" | "cpu" | "speaker" | "database" | "storage" | "cloud";
+    }[];
+    note: string;
+    caption: string;
+  };
   links?: {
     production?: string;
     github?: string;
   };
-  metrics?: Array<{ label: string; value: string }>;
   highlights?: string[];
-  architecture?: string;
-  features?: string[];
-  challenges?: string;
 }
 
 export interface Education {

@@ -10,7 +10,7 @@ export function Socials({ socials }: { socials: ResumeData["socials"] }) {
   const links = [
     { label: "GitHub", url: socials.github, Icon: GithubLogo },
     { label: "LinkedIn", url: socials.linkedin, Icon: LinkedinLogo },
-    { label: "X / Twitter", url: socials.twitter, Icon: XLogo },
+    { label: "X", url: socials.twitter, Icon: XLogo },
   ].filter((link) => link.url);
   return (
     <nav className="social-strip" aria-label="Social profiles">

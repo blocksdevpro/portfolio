@@ -1,43 +1,51 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Check, Copy } from "@phosphor-icons/react";
+import { Check, Copy, WarningCircle } from "@phosphor-icons/react";
+import { useCopyFeedback } from "@/hooks/use-copy-feedback";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function CopyEmail({ email }: { email: string }) {
-  const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-    },
-    [],
-  );
-  async function copy() {
-    if (timer.current) clearTimeout(timer.current);
-    try {
-      await navigator.clipboard.writeText(email);
-      setStatus("copied");
-    } catch {
-      setStatus("failed");
-    }
-    timer.current = setTimeout(() => setStatus("idle"), 3000);
-  }
+  const { status, copy } = useCopyFeedback();
   return (
     <div className="copy-control">
-      <button
-        type="button"
-        onClick={copy}
-        aria-label={status === "copied" ? "Email copied" : "Copy email address"}
-        title="Copy email address"
-      >
-        {status === "copied" ? <Check size={17} /> : <Copy size={17} />}
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={() => void copy(email)}
+            data-state={status}
+            aria-label={
+              status === "copied" ? "Email copied" : "Copy email address"
+            }
+          >
+            <span
+              className="copy-icon"
+              data-visible={status !== "copied" && status !== "failed"}
+            >
+              <Copy size={17} aria-hidden="true" />
+            </span>
+            <span className="copy-icon" data-visible={status === "copied"}>
+              <Check size={17} aria-hidden="true" />
+            </span>
+            <span className="copy-icon" data-visible={status === "failed"}>
+              <WarningCircle size={17} aria-hidden="true" />
+            </span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent sideOffset={8}>Copy email address</TooltipContent>
+      </Tooltip>
       <span role="status">
         {status === "copied"
-          ? "Copied"
+          ? "Copied to clipboard"
           : status === "failed"
-            ? "Select the email to copy"
-            : ""}
+            ? "Select the email above to copy it"
+            : status === "pending"
+              ? "Copying…"
+              : ""}
       </span>
     </div>
   );

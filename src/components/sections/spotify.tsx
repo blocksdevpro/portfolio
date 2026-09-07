@@ -6,11 +6,14 @@ import { MusicNotes } from "@phosphor-icons/react";
 import { parseMusic, type MusicData } from "@/lib/widget-data";
 
 export function SpotifyNowPlaying() {
+  const [hidden, setHidden] = useState(false);
   const [music, setMusic] = useState<MusicData | { kind: "loading" }>({
     kind: "loading",
   });
   useEffect(() => {
     const controller = new AbortController();
+    const updateVisibility = () => setHidden(document.hidden);
+    document.addEventListener("visibilitychange", updateVisibility);
     let pending = false;
     async function load() {
       if (document.hidden || pending) return;
@@ -34,11 +37,12 @@ export function SpotifyNowPlaying() {
       controller.abort();
       clearInterval(timer);
       document.removeEventListener("visibilitychange", load);
+      document.removeEventListener("visibilitychange", updateVisibility);
     };
   }, []);
 
   return (
-    <div className="music-widget">
+    <div className="music-widget" data-hidden={hidden}>
       {music.kind === "track" ? (
         <div className="music-row">
           {music.albumArt ? (

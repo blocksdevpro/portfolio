@@ -1,3 +1,5 @@
+import { BrandInteraction } from "@/components/brand-interaction";
+
 export function BrandMark({ className }: { className?: string }) {
   return (
     <svg
@@ -21,8 +23,8 @@ export function BrandMark({ className }: { className?: string }) {
 
 export function BrandIllustration() {
   return (
-    <div className="brand-illustration" aria-hidden="true">
-      <span className="drawing-label">FIG. 01 / BUILT FROM THE INSIDE OUT</span>
+    <BrandInteraction>
+      <span className="drawing-label">UK / ENGINEERING & CRAFT</span>
       <svg viewBox="0 0 720 176" fill="none" className="brand-drawing">
         <defs>
           <pattern
@@ -34,6 +36,20 @@ export function BrandIllustration() {
           >
             <path d="M0 0V6" stroke="currentColor" strokeWidth=".55" />
           </pattern>
+          <radialGradient
+            id="brand-light"
+            data-brand-light
+            gradientUnits="userSpaceOnUse"
+            cx="360"
+            cy="88"
+            r="140"
+          >
+            <stop offset="0" stopColor="white" />
+            <stop offset="1" stopColor="black" />
+          </radialGradient>
+          <mask id="brand-light-mask">
+            <rect width="720" height="176" fill="url(#brand-light)" />
+          </mask>
         </defs>
         <g
           className="drawing-guides"
@@ -45,7 +61,11 @@ export function BrandIllustration() {
           <circle cx="200" cy="134" r="5" />
           <circle cx="512" cy="42" r="5" />
         </g>
-        <g className="drawing-mark" transform="translate(225 19) skewY(-8)">
+        <g
+          id="brand-geometry"
+          className="drawing-mark"
+          transform="translate(225 34) skewY(-8)"
+        >
           <path
             d="M0 6H26V78H74V6H100V100H0ZM132 6H158V43L204 6H240L180 55L245 100H204L158 67V100H132Z"
             stroke="currentColor"
@@ -55,6 +75,9 @@ export function BrandIllustration() {
             d="M0 100L17 115H117V21L100 6M100 100L117 115M132 100L149 115H175V82M158 100L175 115M204 100L221 115H262L245 100M240 6L257 21L195 66"
             stroke="currentColor"
           />
+        </g>
+        <g className="drawing-highlight" mask="url(#brand-light-mask)">
+          <use href="#brand-geometry" />
         </g>
         <g className="drawing-nodes" stroke="currentColor">
           <path
@@ -66,6 +89,6 @@ export function BrandIllustration() {
         </g>
       </svg>
       <span className="drawing-caption">systems, thoughtfully built.</span>
-    </div>
+    </BrandInteraction>
   );
 }

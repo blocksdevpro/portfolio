@@ -4,9 +4,11 @@ Prepared 6 September 2026 for Uttam Kumbhakar / blocksdev.pro.
 
 Build a precise, minimal portfolio that expresses Uttam's work in Rust, asynchronous backends, and local AI. The intended impression is confident engineering with meticulous presentation. The primary visitor is a potential employer or collaborator; the primary journey is understanding Uttam's specialty, inspecting his work, and contacting him.
 
-The first implementation is now in the application. Both projects are active, as confirmed by Uttam: Boris at https://boris.blocksdev.pro and Calorine at https://calorine.in. The implementation uses the authentic Boris screenshot and the documented Calorine backend architecture. The next pass is a hands-on browser review of desktop, mobile, keyboard behavior, and motion.
+Phase 1 implementation is complete. Both projects are active, as confirmed by Uttam: Boris at https://boris.blocksdev.pro and Calorine at https://calorine.in. Subsequent project presentation work uses architecture illustrations for both projects.
 
-**Evidence and review limits**
+Continue with the [Phase 2 plan](PORTFOLIO-PHASE-2-PLAN.md), which focuses on visual precision, subtle motion, interaction feedback, and mobile browsing. Its [reference review](docs/phase-2/REFERENCE-REVIEW.md) includes fresh preview-browser observations, source-backed motion details, and screenshots of chanhdai.com. The original proposal below remains as Phase 1 history; the Phase 2 documents supersede its earlier browser-access limits and screenshot-based project direction.
+
+**Phase 1 evidence and review limits, historical**
 
 Reviewed the [live reference homepage](https://chanhdai.com/), its [public repository overview](https://github.com/ncdai/chanhdai.com), the author's published [dark screenshot](https://assets.chanhdai.com/images/screenshot-desktop-dark.webp?t=1778602757) and [light screenshot](https://assets.chanhdai.com/images/screenshot-desktop-light.webp?t=1778602757), and the [social links](https://chanhdai.com/blocks/marketing/social-links-01) and [Line Nav](https://chanhdai.com/components/line-nav) documentation. Screenshots illustrate published desktop designs; they are not fresh captures of the current deployment. The interactive browser connection was unavailable, so mobile rendering, hover feel, keyboard behavior, animation smoothness, and measured performance remain unverified. Current portfolio findings below come from its actual source files, not the older source dump in project.md.
 

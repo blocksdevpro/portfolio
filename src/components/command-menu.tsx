@@ -17,12 +17,14 @@ import {
   GithubLogo,
   MagnifyingGlass,
   Moon,
+  Desktop,
   Sun,
   User,
   X,
 } from "@phosphor-icons/react";
 import { Dialog } from "radix-ui";
-import { useThemeTransition } from "@/hooks/use-theme-transition";
+import { useTheme } from "next-themes";
+import { useCopyFeedback } from "@/hooks/use-copy-feedback";
 import { scrollToSection, type SectionHash } from "@/lib/scroll-to-section";
 import { RESUME_DATA } from "@/constants/resume";
 
@@ -30,13 +32,14 @@ type Command = {
   id: string;
   label: string;
   description: string;
+  group: "Navigate" | "Projects" | "Actions" | "Elsewhere";
   keywords: string;
   icon: React.ReactNode;
   action:
     | { kind: "navigate"; href: SectionHash }
     | { kind: "external"; href: string }
     | { kind: "copy" }
-    | { kind: "theme" };
+    | { kind: "theme"; preference: "light" | "dark" | "system" };
 };
 
 function subscribePlatform() {
@@ -53,13 +56,11 @@ export function CommandMenu({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
-    "idle",
-  );
+  const { status: copyStatus, copy, reset: resetCopy } = useCopyFeedback();
   const pendingNavigation = useRef<SectionHash | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const listId = useId();
-  const { nextTheme, toggleTheme } = useThemeTransition();
+  const { theme, setTheme } = useTheme();
   const shortcut = useSyncExternalStore(
     subscribePlatform,
     () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘ K" : "Ctrl K"),
@@ -69,6 +70,7 @@ export function CommandMenu({
   const commands: Command[] = [
     {
       id: "work",
+      group: "Navigate",
       label: "View projects",
       description: "Boris and Calorine",
       keywords: "work portfolio boris calorine",
@@ -77,6 +79,7 @@ export function CommandMenu({
     },
     {
       id: "experience",
+      group: "Navigate",
       label: "View experience",
       description: "Employment history",
       keywords: "career job",
@@ -85,6 +88,7 @@ export function CommandMenu({
     },
     {
       id: "about",
+      group: "Navigate",
       label: "About Uttam",
       description: "A little about my work",
       keywords: "bio stack skills",
@@ -93,6 +97,7 @@ export function CommandMenu({
     },
     {
       id: "contact",
+      group: "Navigate",
       label: "Get in touch",
       description: "Start a conversation",
       keywords: "contact hire",
@@ -101,6 +106,7 @@ export function CommandMenu({
     },
     {
       id: "copy-email",
+      group: "Actions",
       label:
         copyStatus === "copied"
           ? "Email copied"
@@ -115,18 +121,35 @@ export function CommandMenu({
       icon: copyStatus === "copied" ? <Check /> : <Copy />,
       action: { kind: "copy" },
     },
-    {
-      id: "theme",
-      label: "Switch to " + nextTheme + " mode",
-      description: "Change the color theme",
-      keywords: "dark light appearance",
-      icon: nextTheme === "dark" ? <Moon /> : <Sun />,
-      action: { kind: "theme" },
-    },
+    ...(["light", "dark", "system"] as const).map((preference): Command => ({
+      id: `theme-${preference}`,
+      group: "Actions",
+      label:
+        preference === "system"
+          ? "Use system theme"
+          : `Use ${preference} theme`,
+      description:
+        theme === preference
+          ? "Current preference"
+          : preference === "system"
+            ? "Follow your device appearance"
+            : "Save this appearance",
+      keywords: `theme appearance ${preference}`,
+      icon:
+        preference === "system" ? (
+          <Desktop />
+        ) : preference === "dark" ? (
+          <Moon />
+        ) : (
+          <Sun />
+        ),
+      action: { kind: "theme", preference },
+    })),
   ];
   if (githubUrl)
     commands.push({
       id: "github",
+      group: "Elsewhere",
       label: "Open GitHub",
       description: "Repositories and activity",
       keywords: "source code",
@@ -137,6 +160,7 @@ export function CommandMenu({
     if (project.links?.production)
       commands.push({
         id: project.id,
+        group: "Projects",
         label: "Visit " + project.title,
         description: new URL(project.links.production).hostname,
         keywords: project.title,
@@ -155,7 +179,7 @@ export function CommandMenu({
     setOpen(value);
     setQuery("");
     setSelected(0);
-    setCopyStatus("idle");
+    resetCopy();
   }
 
   useEffect(() => {
@@ -165,12 +189,12 @@ export function CommandMenu({
         setOpen((current) => !current);
         setQuery("");
         setSelected(0);
-        setCopyStatus("idle");
+        resetCopy();
       }
     }
     window.addEventListener("keydown", shortcutHandler);
     return () => window.removeEventListener("keydown", shortcutHandler);
-  }, []);
+  }, [resetCopy]);
 
   useEffect(() => {
     if (open)
@@ -191,16 +215,11 @@ export function CommandMenu({
         changeOpen(false);
         return;
       case "copy":
-        try {
-          await navigator.clipboard.writeText(email);
-          setCopyStatus("copied");
-        } catch {
-          setCopyStatus("failed");
-        }
+        await copy(email);
         return;
       case "theme":
+        setTheme(action.preference);
         changeOpen(false);
-        await toggleTheme();
         return;
       default: {
         const exhaustive: never = action;
@@ -217,18 +236,18 @@ export function CommandMenu({
           type="button"
           aria-label="Open command menu"
           title="Quick actions (Ctrl/Command + K)"
-          className="flex h-11 w-11 items-center justify-center gap-2 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground sm:w-auto sm:px-2"
+          className="header-search"
         >
           <MagnifyingGlass size={17} aria-hidden="true" />
-          <kbd className="hidden font-mono text-[10px] sm:inline">
-            {shortcut}
-          </kbd>
+          <span className="header-shortcut" aria-hidden="true">
+            {shortcut.split(" ").map((key) => <kbd key={key}>{key}</kbd>)}
+          </span>
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45 backdrop-blur-[3px] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
         <Dialog.Content
-          className="fixed left-1/2 top-[10dvh] z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl outline-none sm:top-[18vh]"
+          className="command-panel fixed left-1/2 top-[10dvh] z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl outline-none sm:top-[18vh]"
           data-slot="command-content"
           onCloseAutoFocus={(event) => {
             event.preventDefault();
@@ -297,40 +316,47 @@ export function CommandMenu({
             id={listId}
             role="listbox"
             aria-label="Quick actions"
-            className="max-h-[min(420px,48dvh)] overflow-y-auto p-2"
+            className="command-results h-[min(420px,48dvh)] overflow-y-auto p-2"
           >
             {filtered.map((command, index) => (
-              <div
-                key={command.id}
-                id={listId + "-" + index}
-                role="option"
-                aria-selected={selected === index}
-                data-selected={selected === index}
-                className="flex cursor-pointer items-center gap-3 rounded-md px-3 py-3 data-[selected=true]:bg-muted"
-                onMouseDown={(event) => event.preventDefault()}
-                onMouseEnter={() => setSelected(index)}
-                onClick={() => void execute(command)}
-              >
-                <span
-                  className="flex size-8 items-center justify-center rounded-md border bg-background text-muted-foreground [&_svg]:size-4"
-                  aria-hidden="true"
+              <div key={command.id}>
+                {(index === 0 ||
+                  filtered[index - 1].group !== command.group) && (
+                  <div className="command-group" aria-hidden="true">
+                    {command.group}
+                  </div>
+                )}
+                <div
+                  id={listId + "-" + index}
+                  role="option"
+                  aria-selected={selected === index}
+                  data-selected={selected === index}
+                  className="command-option flex cursor-pointer items-center gap-3 rounded-md px-3 py-3 data-[selected=true]:bg-muted"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => setSelected(index)}
+                  onClick={() => void execute(command)}
                 >
-                  {command.icon}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm">{command.label}</span>
-                  <span className="block truncate text-xs text-muted-foreground">
-                    {command.description}
-                  </span>
-                </span>
-                {index === selected && (
-                  <kbd
-                    className="text-xs text-muted-foreground"
+                  <span
+                    className="flex size-8 items-center justify-center rounded-md border bg-background text-muted-foreground [&_svg]:size-4"
                     aria-hidden="true"
                   >
-                    ↵
-                  </kbd>
-                )}
+                    {command.icon}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm">{command.label}</span>
+                    <span className="block truncate text-xs text-muted-foreground">
+                      {command.description}
+                    </span>
+                  </span>
+                  {index === selected && (
+                    <kbd
+                      className="text-xs text-muted-foreground"
+                      aria-hidden="true"
+                    >
+                      ↵
+                    </kbd>
+                  )}
+                </div>
               </div>
             ))}
             {!filtered.length && (
@@ -340,9 +366,14 @@ export function CommandMenu({
               </div>
             )}
           </div>
-          <div className="flex justify-between border-t px-4 py-3 font-mono text-[10px] text-muted-foreground">
+          <div className="flex flex-wrap gap-2 justify-between border-t px-4 py-3 font-mono text-xs text-muted-foreground">
             <span>↑ ↓ to navigate</span>
-            <span>Enter to open · Esc to close</span>
+            <span>
+              {selectedCommand
+                ? `Enter to ${selectedCommand.action.kind === "copy" ? "copy" : selectedCommand.action.kind === "theme" ? "apply" : "open"} · `
+                : ""}
+              Esc to close
+            </span>
           </div>
           {copyStatus === "failed" && (
             <p className="border-t px-4 py-3 text-sm select-text">{email}</p>

@@ -23,7 +23,7 @@ export function Hero({ data }: { data: ResumeData }) {
             className="portrait"
           />
           <div className="min-w-0">
-            <p className="eyebrow mb-2">RUST BACKEND DEVELOPER</p>
+            <p className="eyebrow mb-2">{data.title}</p>
             <h1 id="profile-name">{data.name}</h1>
           </div>
         </div>

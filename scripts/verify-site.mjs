@@ -47,7 +47,6 @@ console.log(
 
 const resources = [
   ["/portrait.webp", "image/webp"],
-  ["/projects/boris.webp", "image/webp"],
   ["/icon.svg", "image/svg+xml"],
   ["/opengraph-image", "image/png"],
   ["/sitemap.xml", "xml"],
@@ -70,7 +69,7 @@ await Promise.all(
   }),
 );
 console.log(
-  "Portrait, project image, favicon, social card, sitemap, and robots routes passed.",
+  "Portrait, favicon, social card, sitemap, and robots routes passed.",
 );
 
 for (const path of ["/api/contributions", "/api/spotify"]) {

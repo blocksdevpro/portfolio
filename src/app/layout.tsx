@@ -8,11 +8,13 @@ import { RESUME_DATA } from "@/constants/resume";
 const interSans = Inter({
   variable: "--font-inter-sans",
   subsets: ["latin"],
+  display: "optional",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "optional",
 });
 
 export const metadata: Metadata = {
@@ -62,7 +64,7 @@ export default function RootLayout({
             }).replace(/</g, "\\u003c"),
           }}
         />
-        <Analytics />
+        {process.env.VERCEL === "1" && <Analytics />}
       </body>
     </html>
   );

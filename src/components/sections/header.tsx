@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { GithubLogo } from "@phosphor-icons/react";
 import { BrandMark } from "@/components/brand";
 import { CommandMenu } from "@/components/command-menu";
 import { ModeSwitcher } from "@/components/mode-switcher";
@@ -84,7 +85,7 @@ export function Header({
       >
         <BrandMark />
       </a>
-      <div className="flex items-center gap-1 sm:gap-3">
+      <div className="header-controls">
         <nav aria-label="Primary navigation" className="header-nav">
           {links.map((link) => (
             <a
@@ -98,10 +99,17 @@ export function Header({
           ))}
         </nav>
         <span className="header-separator" aria-hidden="true" />
-        <div className="flex items-center">
-          <CommandMenu email={email} githubUrl={githubUrl} />
-          <ModeSwitcher />
-        </div>
+        <CommandMenu email={email} githubUrl={githubUrl} />
+        {githubUrl && (
+          <>
+            <span className="header-separator" aria-hidden="true" />
+            <a className="header-github" href={githubUrl} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+              <GithubLogo size={18} weight="fill" aria-hidden="true" />
+            </a>
+          </>
+        )}
+        <span className="header-separator" aria-hidden="true" />
+        <ModeSwitcher />
       </div>
     </header>
   );

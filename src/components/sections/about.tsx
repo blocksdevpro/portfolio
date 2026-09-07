@@ -4,7 +4,7 @@ import type { ResumeData } from "@/types/resume";
 export function About({ data }: { data: ResumeData }) {
   return (
     <section id="about" className="portfolio-section" tabIndex={-1}>
-      <SectionHeading number="03" detail="A little context.">
+      <SectionHeading number="03" sectionId="about">
         About me
       </SectionHeading>
       <div className="section-inset section-body about-copy">

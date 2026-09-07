@@ -9,7 +9,7 @@ export function Experience({
 }) {
   return (
     <section id="experience" className="portfolio-section" tabIndex={-1}>
-      <SectionHeading number="02" detail="Where I've contributed.">
+      <SectionHeading number="02">
         Experience
       </SectionHeading>
       {experience.map((job) => (
