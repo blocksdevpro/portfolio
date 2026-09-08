@@ -319,20 +319,6 @@ html,
   to { opacity: 0; stroke-width: 0.5; }
 }
 .brand-illustration[data-reduced="true"] :is(.signal-trace, .signal-head, .signal-bridge, .signal-ack) { display: none; }
-.brand-sound {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  min-height: 44px;
-  border-radius: 5px;
-  color: var(--muted-foreground);
-  opacity: 0.6;
-}
-.brand-sound:is(:hover, :focus-visible) { color: var(--copper); opacity: 1; }
 .drawing-label,
 .drawing-caption {
   position: absolute;
@@ -373,7 +359,9 @@ html,
   border-bottom: 0;
 }
 .profile-cover .drawing-caption {
-  bottom: 76px;
+  top: 20px;
+  right: 20px;
+  bottom: auto;
   font-size: 11px;
 }
 .hero-identity {
@@ -930,40 +918,9 @@ button.activity-day {
   padding: 0;
   border: 0;
 }
-button.activity-day:is(:hover, :focus-visible, [data-state="delayed-open"], [data-state="instant-open"]) {
+button.activity-day:is(:hover, :focus-visible, [data-popup-open]) {
   outline: 2px solid var(--foreground);
   outline-offset: 1px;
-}
-.activity-tooltip {
-  display: grid;
-  gap: 3px;
-  z-index: 60;
-  padding: 9px 12px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--card);
-  color: var(--foreground);
-  box-shadow: 0 4px 16px #0003;
-  font-size: 12px;
-  line-height: 1.5;
-  animation: tooltip-in 100ms ease-out;
-}
-.activity-tooltip strong {
-  font-weight: 600;
-}
-.activity-tooltip span {
-  color: var(--muted-foreground);
-  font: 11px/1.5 var(--font-jetbrains-mono), monospace;
-}
-.activity-tooltip-arrow {
-  fill: var(--card);
-}
-@keyframes tooltip-in {
-  from { transform: translateY(3px); }
-  to { transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .activity-tooltip { animation: none; }
 }
 .activity-day[data-level="1"] {
   background: color-mix(in srgb, var(--copper) 25%, var(--muted));
@@ -1206,6 +1163,10 @@ button.activity-day:is(:hover, :focus-visible, [data-state="delayed-open"], [dat
   .profile-cover .brand-illustration {
     height: 250px;
     padding-bottom: 104px;
+  }
+  .profile-cover .drawing-caption {
+    top: 16px;
+    right: 16px;
   }
   .portrait {
     width: 104px;

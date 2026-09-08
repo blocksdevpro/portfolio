@@ -1,5 +1,7 @@
 "use client";
 
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
 import {
   useEffect,
   useId,
@@ -230,20 +232,19 @@ export function CommandMenu({
 
   return (
     <Dialog.Root open={open} onOpenChange={changeOpen}>
-      <Dialog.Trigger asChild>
-        <button
-          ref={trigger}
-          type="button"
-          aria-label="Open command menu"
-          title="Quick actions (Ctrl/Command + K)"
-          className="header-search"
-        >
-          <MagnifyingGlass size={17} aria-hidden="true" />
-          <span className="header-shortcut" aria-hidden="true">
-            {shortcut.split(" ").map((key) => <kbd key={key}>{key}</kbd>)}
-          </span>
-        </button>
-      </Dialog.Trigger>
+      <Tooltip>
+        <Dialog.Trigger asChild>
+          <TooltipTrigger render={
+            <button ref={trigger} type="button" aria-label="Open command menu" className="header-search" />
+          }>
+            <MagnifyingGlass size={17} aria-hidden="true" />
+            <span className="header-shortcut" aria-hidden="true">
+              {shortcut.split(" ").map((key) => <kbd key={key}>{key}</kbd>)}
+            </span>
+          </TooltipTrigger>
+        </Dialog.Trigger>
+        <TooltipContent>Quick actions ({shortcut})</TooltipContent>
+      </Tooltip>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/20 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
         <Dialog.Content

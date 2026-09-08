@@ -68,7 +68,7 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
               </a>
             )}
           </nav>
-          <ProjectArchitecture media={project.media} number={index + 1} />
+          <ProjectArchitecture media={project.media} number={index + 2} />
           <ul
             className="project-highlights"
             aria-label={`${project.title} highlights`}

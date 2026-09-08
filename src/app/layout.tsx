@@ -3,6 +3,7 @@ import { Caveat, Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { RESUME_DATA } from "@/constants/resume";
 
 const interSans = Inter({
@@ -53,10 +54,12 @@ export default function RootLayout({
         className={`${interSans.variable} ${jetbrainsMono.variable} ${handwriting.variable} font-sans antialiased min-h-screen`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <a href="#main" className="skip-link">
-            Skip to content
-          </a>
-          {children}
+          <TooltipProvider>
+            <a href="#main" className="skip-link">
+              Skip to content
+            </a>
+            {children}
+          </TooltipProvider>
         </ThemeProvider>
         <script
           type="application/ld+json"

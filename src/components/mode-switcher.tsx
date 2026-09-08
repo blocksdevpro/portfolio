@@ -4,6 +4,11 @@ import * as React from "react";
 import { Moon, Sun } from "@phosphor-icons/react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useThemeTransition } from "@/hooks/use-theme-transition";
 
 export function ModeSwitcher() {
@@ -23,16 +28,22 @@ export function ModeSwitcher() {
   );
 
   return (
-    <Button
-      aria-label="Toggle color theme"
-      variant="ghost"
-      className="relative h-11 w-11 overflow-hidden px-0 text-muted-foreground"
-      onClick={handleThemeToggle}
-      title="Toggle color theme"
-      type="button"
-    >
-      <Sun aria-hidden="true" className="theme-icon theme-icon-sun" />
-      <Moon aria-hidden="true" className="theme-icon theme-icon-moon" />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            aria-label="Toggle color theme"
+            variant="ghost"
+            className="relative h-11 w-11 overflow-hidden px-0 text-muted-foreground"
+            onClick={handleThemeToggle}
+            type="button"
+          />
+        }
+      >
+        <Sun aria-hidden="true" className="theme-icon theme-icon-sun" />
+        <Moon aria-hidden="true" className="theme-icon theme-icon-moon" />
+      </TooltipTrigger>
+      <TooltipContent>Toggle color theme</TooltipContent>
+    </Tooltip>
   );
 }

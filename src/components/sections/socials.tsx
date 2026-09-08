@@ -4,6 +4,11 @@ import {
   XLogo,
 } from "@phosphor-icons/react/dist/ssr";
 import type { ResumeData } from "@/types/resume";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function Socials({ socials }: { socials: ResumeData["socials"] }) {
   const links = [
@@ -14,9 +19,21 @@ export function Socials({ socials }: { socials: ResumeData["socials"] }) {
   return (
     <nav className="social-strip" aria-label="Social profiles">
       {links.map(({ label, url, Icon }) => (
-        <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}>
-          <Icon size={20} aria-hidden="true" />
-        </a>
+        <Tooltip key={label}>
+          <TooltipTrigger
+            render={
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+              />
+            }
+          >
+            <Icon size={20} aria-hidden="true" />
+          </TooltipTrigger>
+          <TooltipContent>{label}</TooltipContent>
+        </Tooltip>
       ))}
     </nav>
   );

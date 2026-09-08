@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
 import { createBrandAudio, preloadBrandAudio } from "@/lib/brand-audio";
 
 type Cycle =
@@ -12,26 +11,15 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
   const ref = useRef<HTMLDivElement>(null);
   const trigger = useRef<(() => void) | null>(null);
   const audio = useRef<ReturnType<typeof createBrandAudio> | null>(null);
-  const mutedRef = useRef(false);
-  const [muted, setMuted] = useState(false);
-
   function activate() {
     // Audio is unlocked by the same deliberate gesture that starts the signal.
-    if (!mutedRef.current) {
-      try {
-        audio.current ??= createBrandAudio();
-        void audio.current.resume().catch(() => {});
-      } catch {
-        // The visual interaction also works when audio is unavailable.
-      }
+    try {
+      audio.current ??= createBrandAudio();
+      void audio.current.resume().catch(() => {});
+    } catch {
+      // The visual interaction also works when audio is unavailable.
     }
     trigger.current?.();
-  }
-
-  function toggleMute() {
-    mutedRef.current = !mutedRef.current;
-    setMuted(mutedRef.current);
-    audio.current?.mute(mutedRef.current);
   }
 
   useEffect(() => {
@@ -75,7 +63,7 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
       element.dataset.phase = "accept";
       element.dataset.reduced = String(reduced.matches);
       trace.style.strokeDashoffset = String(tail);
-      if (!mutedRef.current) audio.current?.play("accept");
+      audio.current?.play("accept");
       frame = requestAnimationFrame(tick);
     };
     const tick = (now: number) => {
@@ -109,7 +97,7 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
       }
       if (elapsed >= 510 && !cycle.completed) {
         cycle.completed = true;
-        if (!mutedRef.current) audio.current?.play("complete");
+        audio.current?.play("complete");
       }
       frame = requestAnimationFrame(tick);
     };
@@ -139,16 +127,24 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
 
   return (
     <div ref={ref} className="brand-illustration" data-phase="idle">
-      <button type="button" className="brand-trigger" aria-label="Send a signal through UK" aria-describedby="brand-instructions" onClick={activate} onKeyDown={(event) => {
-        if (event.repeat && (event.key === "Enter" || event.key === " ")) event.preventDefault();
-      }}>
+      <button
+        type="button"
+        className="brand-trigger"
+        aria-label="Send a signal through UK"
+        aria-describedby="brand-instructions"
+        onClick={activate}
+        onKeyDown={(event) => {
+          if (event.repeat && (event.key === "Enter" || event.key === " "))
+            event.preventDefault();
+        }}
+      >
         {children}
       </button>
       <span className="drawing-caption">{caption}</span>
-      <p id="brand-instructions" className="sr-only">Activate to send a signal from U to K, with a soft mechanical sound. Press Escape to cancel.</p>
-      <button type="button" className="brand-sound" aria-label={muted ? "Unmute interaction sound" : "Mute interaction sound"} aria-pressed={muted} onClick={toggleMute} title={muted ? "Unmute" : "Mute"}>
-        {muted ? <SpeakerSlash size={15} aria-hidden="true" /> : <SpeakerHigh size={15} aria-hidden="true" />}
-      </button>
+      <p id="brand-instructions" className="sr-only">
+        Activate to send a signal from U to K, with a soft mechanical sound.
+        Press Escape to cancel.
+      </p>
     </div>
   );
 }

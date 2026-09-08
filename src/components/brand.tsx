@@ -51,7 +51,7 @@ const letters = letterOutlines.map((outline) => {
 
 export function BrandIllustration() {
   return (
-    <BrandInteraction caption="Fig. 1">
+    <BrandInteraction caption="Fig. 01">
       <svg viewBox="0 0 720 300" fill="none" className="brand-drawing" aria-hidden="true">
         <defs>
           <pattern

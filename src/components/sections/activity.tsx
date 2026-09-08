@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Tooltip } from "radix-ui";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { RESUME_DATA } from "@/constants/resume";
 import { parseContributions, type ActivityData } from "@/lib/widget-data";
 
@@ -125,26 +130,39 @@ export function Activity() {
                   </span>
                 ))}
               </div>
-              <Tooltip.Provider delayDuration={100} skipDelayDuration={300} disableHoverableContent>
-              <div className="activity-grid">
-                {Array.from({ length: padding }, (_, index) => (
-                  <span key={"pad-" + index} aria-hidden="true" />
-                ))}
-                {activity.days.map((entry, index) => (
-                  <Tooltip.Root
-                    key={entry.date}
-                    open={openDate === entry.date}
-                    onOpenChange={(open) => setOpenDate((current) =>
-                      open ? entry.date : current === entry.date ? null : current
-                    )}
-                  >
-                    <Tooltip.Trigger asChild>
-                      <button
+              <TooltipProvider delay={100}>
+                <div className="activity-grid">
+                  {Array.from({ length: padding }, (_, index) => (
+                    <span key={"pad-" + index} aria-hidden="true" />
+                  ))}
+                  {activity.days.map((entry, index) => (
+                    <Tooltip
+                      key={entry.date}
+                      triggerId={`activity-${entry.date}`}
+                      open={openDate === entry.date}
+                      onOpenChange={(open) =>
+                        setOpenDate((current) =>
+                          open
+                            ? entry.date
+                            : current === entry.date
+                              ? null
+                              : current,
+                        )
+                      }
+                    >
+                      <TooltipTrigger
+                        id={`activity-${entry.date}`}
+                        closeOnClick={false}
                         type="button"
                         className="activity-day"
                         data-level={entry.level}
                         data-date={entry.date}
-                        tabIndex={focusedDate === entry.date || (!focusedDate && index === activity.days.length - 1) ? 0 : -1}
+                        tabIndex={
+                          focusedDate === entry.date ||
+                          (!focusedDate && index === activity.days.length - 1)
+                            ? 0
+                            : -1
+                        }
                         aria-label={`${entry.count} ${entry.count === 1 ? "contribution" : "contributions"} on ${dateLabel(entry.date)}`}
                         onFocus={() => setFocusedDate(entry.date)}
                         onClick={(event) => {
@@ -154,34 +172,60 @@ export function Activity() {
                         onKeyDown={(event) => {
                           let next = index;
                           switch (event.key) {
-                            case "ArrowLeft": next -= 7; break;
-                            case "ArrowRight": next += 7; break;
-                            case "ArrowUp": next -= 1; break;
-                            case "ArrowDown": next += 1; break;
-                            case "Home": next = 0; break;
-                            case "End": next = activity.days.length - 1; break;
-                            default: return;
+                            case "ArrowLeft":
+                              next -= 7;
+                              break;
+                            case "ArrowRight":
+                              next += 7;
+                              break;
+                            case "ArrowUp":
+                              next -= 1;
+                              break;
+                            case "ArrowDown":
+                              next += 1;
+                              break;
+                            case "Home":
+                              next = 0;
+                              break;
+                            case "End":
+                              next = activity.days.length - 1;
+                              break;
+                            default:
+                              return;
                           }
                           event.preventDefault();
-                          const target = activity.days[Math.max(0, Math.min(next, activity.days.length - 1))];
+                          const target =
+                            activity.days[
+                              Math.max(
+                                0,
+                                Math.min(next, activity.days.length - 1),
+                              )
+                            ];
                           if (!target) return;
-                          const button = scrollRef.current?.querySelector<HTMLButtonElement>(`[data-date="${target.date}"]`);
+                          const button =
+                            scrollRef.current?.querySelector<HTMLButtonElement>(
+                              `[data-date="${target.date}"]`,
+                            );
                           button?.focus({ preventScroll: true });
-                          button?.scrollIntoView({ block: "nearest", inline: "nearest" });
+                          button?.scrollIntoView({
+                            block: "nearest",
+                            inline: "nearest",
+                          });
                         }}
                       />
-                    </Tooltip.Trigger>
-                    <Tooltip.Portal>
-                      <Tooltip.Content className="activity-tooltip" sideOffset={8} collisionPadding={12}>
-                        <strong>{entry.count} {entry.count === 1 ? "contribution" : "contributions"}</strong>
-                        <span>{dateLabel(entry.date)}</span>
-                        <Tooltip.Arrow className="activity-tooltip-arrow" width={10} height={5} />
-                      </Tooltip.Content>
-                    </Tooltip.Portal>
-                  </Tooltip.Root>
-                ))}
-              </div>
-              </Tooltip.Provider>
+                      <TooltipContent className="grid gap-1">
+                        <strong className="font-semibold">
+                          {entry.count}{" "}
+                          {entry.count === 1 ? "contribution" : "contributions"}
+                        </strong>
+                        <span className="font-mono text-[11px] opacity-75">
+                          {dateLabel(entry.date)}
+                        </span>
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              </TooltipProvider>
             </div>
             <p className="activity-scroll-hint">
               Scroll the graph to see earlier months{" "}
