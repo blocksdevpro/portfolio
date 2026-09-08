@@ -7,6 +7,7 @@ export function useCopyFeedback() {
     "idle" | "pending" | "copied" | "failed"
   >("idle");
   const attempt = useRef(0);
+  const pending = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const reset = useCallback(() => {
@@ -24,9 +25,11 @@ export function useCopyFeedback() {
   );
 
   const copy = useCallback(async (text: string) => {
+    if (pending.current) return;
+    pending.current = true;
     const current = ++attempt.current;
     if (timer.current) clearTimeout(timer.current);
-    setStatus("pending");
+    setStatus((previous) => previous === "copied" ? "copied" : "pending");
     try {
       await navigator.clipboard.writeText(text);
       if (current !== attempt.current) return;
@@ -36,6 +39,8 @@ export function useCopyFeedback() {
       }, 2000);
     } catch {
       if (current === attempt.current) setStatus("failed");
+    } finally {
+      pending.current = false;
     }
   }, []);
 

@@ -268,6 +268,71 @@ html,
   width: 100%;
   height: 100%;
 }
+.brand-trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  text-align: inherit;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.brand-trigger:active { scale: none; }
+.brand-trigger:focus-visible {
+  outline: 1px dashed var(--copper);
+  outline-offset: -8px;
+}
+.signal-circuit { color: var(--copper); pointer-events: none; }
+.signal-route, .signal-bridge, .signal-port, .signal-trace, .signal-head, .signal-ack {
+  opacity: 0;
+}
+.signal-route, .signal-bridge, .signal-port {
+  transition: opacity 100ms ease;
+  stroke-width: 0.85;
+}
+.signal-input, .signal-output {
+  fill: var(--background);
+  stroke-width: 1;
+  opacity: 0;
+  transition: fill 80ms, opacity 80ms;
+}
+.signal-port { fill: var(--background); }
+.signal-head { fill: currentColor; stroke: none; }
+.brand-trigger:focus-visible :is(.signal-input, .signal-output),
+.brand-illustration:not([data-phase="idle"]) :is(.signal-input, .signal-output) { opacity: 0.65; }
+@media (hover: hover) {
+  .brand-trigger:hover :is(.signal-input, .signal-output) { opacity: 0.65; }
+}
+.brand-illustration:is([data-phase="accept"], [data-phase="send"]) .signal-input,
+.brand-illustration[data-phase="complete"] .signal-output {
+  fill: currentColor;
+  opacity: 1;
+}
+.brand-illustration:is([data-phase="accept"], [data-phase="send"]) .signal-route-u,
+.brand-illustration:is([data-phase="receive"], [data-phase="complete"]) .signal-route-k { opacity: 0.22; }
+.brand-illustration[data-phase="handoff"] :is(.signal-bridge, .signal-port) { opacity: 0.65; }
+.brand-illustration:is([data-phase="send"], [data-phase="handoff"], [data-phase="receive"]) :is(.signal-trace, .signal-head) { opacity: 1; }
+.brand-illustration[data-phase="complete"] .signal-ack { animation: signal-ack 250ms ease-out both; }
+@keyframes signal-ack {
+  from { opacity: 0.65; stroke-width: 2; }
+  to { opacity: 0; stroke-width: 0.5; }
+}
+.brand-illustration[data-reduced="true"] :is(.signal-trace, .signal-head, .signal-bridge, .signal-ack) { display: none; }
+.brand-sound {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-height: 44px;
+  border-radius: 5px;
+  color: var(--muted-foreground);
+  opacity: 0.6;
+}
+.brand-sound:is(:hover, :focus-visible) { color: var(--copper); opacity: 1; }
 .drawing-label,
 .drawing-caption {
   position: absolute;
@@ -424,6 +489,57 @@ h1 {
   text-decoration: underline;
   text-underline-offset: 4px;
   color: var(--copper);
+}
+.profile-copy-value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.profile-copy-value > a {
+  min-width: 0;
+}
+.profile-copy {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 160ms ease, background-color 160ms ease,
+    border-color 160ms ease, color 160ms ease;
+}
+.profile-fact:hover .profile-copy,
+.profile-fact:focus-within .profile-copy,
+.contact-actions:is(:hover, :focus-within) .profile-copy,
+.profile-copy[data-state="copied"],
+.profile-copy[data-state="failed"] {
+  opacity: 1;
+}
+.profile-copy:hover {
+  background: var(--muted);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+.profile-copy:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+.profile-copy[data-state="copied"] {
+  color: var(--status);
+}
+@media (hover: none), (pointer: coarse) {
+  .profile-copy {
+    opacity: 1;
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
 }
 .profile-socials {
   position: relative;
@@ -916,7 +1032,7 @@ button.activity-day:is(:hover, :focus-visible, [data-state="delayed-open"], [dat
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
 }
 .contact-actions > a {
   display: inline-flex;
@@ -928,31 +1044,6 @@ button.activity-day:is(:hover, :focus-visible, [data-state="delayed-open"], [dat
 }
 .contact-actions > a:hover {
   color: var(--copper);
-}
-.copy-control {
-  position: relative;
-}
-.copy-control button {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  color: var(--muted-foreground);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-.copy-control button:hover {
-  background: var(--muted);
-  color: var(--foreground);
-}
-.copy-control [role="status"] {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 150px;
-  font-size: 12px;
-  padding-top: 4px;
-  color: var(--muted-foreground);
 }
 .music-widget {
   min-height: 96px;
@@ -1234,33 +1325,8 @@ button.activity-day:is(:hover, :focus-visible, [data-state="delayed-open"], [dat
   display: inline-flex;
   align-self: center;
 }
-.section-copy-button {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-block: -8px;
-  border-radius: 5px;
-  color: var(--muted-foreground);
-  opacity: 0;
-  transition:
-    opacity 160ms,
-    background-color 160ms;
-}
-.section-heading:is(:hover, :focus-within) .section-copy-button {
+.section-heading:is(:hover, :focus-within) .section-link-copy {
   opacity: 1;
-}
-.section-copy-button:is(:hover, :focus-visible) {
-  color: var(--foreground);
-  background: var(--muted);
-}
-.section-copy-status {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  width: 120px;
-  color: var(--muted-foreground);
-  font-size: 11px;
 }
 .section-copy-fallback {
   position: absolute;
@@ -1278,14 +1344,6 @@ button.activity-day:is(:hover, :focus-visible, [data-state="delayed-open"], [dat
 }
 .drawing-mark {
   color: inherit;
-}
-.drawing-highlight {
-  color: var(--copper);
-  opacity: 0;
-  transition: opacity 240ms;
-}
-.brand-illustration[data-lit="true"] .drawing-highlight {
-  opacity: 1;
 }
 :root {
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -1559,15 +1617,6 @@ button:active,
   overflow-wrap: anywhere;
   min-width: 0;
 }
-.copy-control [role="status"] {
-  left: auto;
-  right: 0;
-  text-align: right;
-  max-width: min(240px, 65vw);
-  width: 230px;
-  min-height: 24px;
-  font-size: 12px;
-}
 .copy-icon {
   display: grid;
   place-items: center;
@@ -1583,16 +1632,6 @@ button:active,
 .copy-icon[data-visible="true"] {
   opacity: 1;
   transform: scale(1);
-}
-.copy-control button {
-  background: var(--card);
-}
-.copy-control button[data-state="copied"] {
-  color: var(--status);
-  border-color: color-mix(in srgb, var(--status) 45%, var(--border));
-}
-.copy-control button[data-state="pending"] {
-  color: var(--muted-foreground);
 }
 .music-widget {
   margin-top: 10px;
@@ -1709,11 +1748,6 @@ button:active,
   padding-inline: 4px;
 }
 @media (max-width: 600px) {
-  .section-copy-button {
-    opacity: 1;
-    width: 32px;
-    min-height: 44px;
-  }
   .diagram-canvas {
     padding: 16px;
   }
@@ -1810,9 +1844,6 @@ button:active,
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .drawing-highlight {
-    display: none;
-  }
   html {
     scroll-behavior: auto;
   }

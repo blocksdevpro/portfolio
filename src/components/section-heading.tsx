@@ -19,8 +19,10 @@ export function SectionHeading({
         <span className="section-number" aria-hidden="true">
           {number}
         </span>
-        <h2 id={id}>{children}</h2>
-        {sectionId && <CopySectionLink sectionId={sectionId} />}
+        <div className="flex min-w-0 items-center gap-2">
+          <h2 id={id}>{children}</h2>
+          {sectionId && <CopySectionLink sectionId={sectionId} />}
+        </div>
       </div>
       {detail && <span className="section-detail">{detail}</span>}
     </div>

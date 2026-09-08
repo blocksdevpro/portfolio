@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { BrandIllustration } from "@/components/brand";
 import { LocalTime } from "@/components/local-time";
+import { CopyButton } from "@/components/copy-button";
 import { About } from "@/components/sections/about";
 import { Activity } from "@/components/sections/activity";
 import { Socials } from "@/components/sections/socials";
@@ -58,7 +59,10 @@ export function Hero({ data }: { data: ResumeData }) {
           </div>
           <div className="profile-fact">
             <dt><LinkSimple size={16} aria-hidden="true" /><span className="sr-only">Website</span></dt>
-            <dd><a href={data.website}>{new URL(data.website).hostname}</a></dd>
+            <dd className="profile-copy-value">
+              <a href={data.website}>{new URL(data.website).hostname}</a>
+              <CopyButton value={data.website} label="Website" />
+            </dd>
           </div>
         </dl>
         <dl className="profile-column">
@@ -68,7 +72,10 @@ export function Hero({ data }: { data: ResumeData }) {
           </div>
           <div className="profile-fact">
             <dt><EnvelopeSimple size={16} aria-hidden="true" /><span className="sr-only">Email</span></dt>
-            <dd><a href={`mailto:${data.email}`}>{data.email}</a></dd>
+            <dd className="profile-copy-value">
+              <a href={`mailto:${data.email}`}>{data.email}</a>
+              <CopyButton value={data.email} label="Email" />
+            </dd>
           </div>
           {data.pronouns && (
             <div className="profile-fact">

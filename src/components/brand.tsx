@@ -30,6 +30,15 @@ const letterOutlines: Point[][] = [
 ];
 const project = ([x, y]: Point): Point => [160 + (x + y) * 1.18, 175 + (y - x) * 0.59];
 const points = (vertices: Point[]) => vertices.map(([x, y]) => `${x},${y}`).join(" ");
+const route = (vertices: Point[]) => vertices.map((point, index) => `${index ? "L" : "M"}${project(point).join(" ")}`).join(" ");
+const uRoute: Point[] = [[16, 38], [16, 132], [94, 132], [94, 78]];
+const bridgeRoute: Point[] = [[94, 78], [162, 78]];
+const kRoute: Point[] = [[162, 78], [174, 78], [248, 134]];
+const signalRoute = route([...uRoute, ...bridgeRoute.slice(1), ...kRoute.slice(1)]);
+const input = project([16, 38]);
+const output = project([248, 134]);
+const handoff = project([94, 78]);
+const receive = project([162, 78]);
 const letters = letterOutlines.map((outline) => {
   const top = outline.map(project);
   const sides = top.flatMap((start, index) => {
@@ -42,8 +51,8 @@ const letters = letterOutlines.map((outline) => {
 
 export function BrandIllustration() {
   return (
-    <BrandInteraction>
-      <svg viewBox="0 0 720 300" fill="none" className="brand-drawing">
+    <BrandInteraction caption="Fig. 1">
+      <svg viewBox="0 0 720 300" fill="none" className="brand-drawing" aria-hidden="true">
         <defs>
           <pattern
             id="hatching"
@@ -54,20 +63,6 @@ export function BrandIllustration() {
           >
             <path d="M0 0V7" stroke="currentColor" strokeWidth=".65" />
           </pattern>
-          <radialGradient
-            id="brand-light"
-            data-brand-light
-            gradientUnits="userSpaceOnUse"
-            cx="360"
-            cy="150"
-            r="190"
-          >
-            <stop offset="0" stopColor="white" />
-            <stop offset="1" stopColor="black" />
-          </radialGradient>
-          <mask id="brand-light-mask">
-            <rect width="720" height="300" fill="url(#brand-light)" />
-          </mask>
         </defs>
         <g
           className="drawing-guides"
@@ -82,7 +77,7 @@ export function BrandIllustration() {
           className="drawing-mark"
         >
           {letters.map((letter, index) => (
-            <g key={index} stroke="currentColor" strokeWidth=".8" strokeLinejoin="round">
+            <g key={index} data-brand-letter={index === 0 ? "U" : "K"} stroke="currentColor" strokeWidth=".8" strokeLinejoin="round">
               {letter.sides.map((side, sideIndex) => (
                 <polygon key={sideIndex} points={side} fill="var(--background)" />
               ))}
@@ -91,11 +86,19 @@ export function BrandIllustration() {
             </g>
           ))}
         </g>
-        <g className="drawing-highlight" mask="url(#brand-light-mask)">
-          <use href="#brand-geometry" />
+        <g className="signal-circuit" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <path data-route-u d={route(uRoute)} className="signal-route signal-route-u" />
+          <path data-route-bridge d={route(bridgeRoute)} className="signal-bridge" strokeDasharray="3 4" />
+          <path d={route(kRoute)} className="signal-route signal-route-k" />
+          <circle cx={handoff[0]} cy={handoff[1]} r="2" className="signal-port" />
+          <circle cx={receive[0]} cy={receive[1]} r="2" className="signal-port" />
+          <path data-signal-trace d={signalRoute} className="signal-trace" strokeWidth="2" />
+          <circle data-signal-head cx={input[0]} cy={input[1]} r="2.3" className="signal-head" />
+          <circle cx={input[0]} cy={input[1]} r="3.5" className="signal-input" />
+          <circle cx={output[0]} cy={output[1]} r="3.5" className="signal-output" />
+          <circle cx={output[0]} cy={output[1]} r="8" className="signal-ack" />
         </g>
       </svg>
-      <span className="drawing-caption">Fig. 1</span>
     </BrandInteraction>
   );
 }

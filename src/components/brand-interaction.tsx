@@ -1,69 +1,141 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
+import { createBrandAudio, preloadBrandAudio } from "@/lib/brand-audio";
 
-/** A local light follows the pointer. The illustration never moves the content. */
-export function BrandInteraction({ children }: { children: React.ReactNode }) {
+type Cycle =
+  | { kind: "idle" }
+  | { kind: "running"; started: number; completed: boolean };
+
+export function BrandInteraction({ children, caption }: { children: React.ReactNode; caption: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const trigger = useRef<(() => void) | null>(null);
+  const audio = useRef<ReturnType<typeof createBrandAudio> | null>(null);
+  const mutedRef = useRef(false);
+  const [muted, setMuted] = useState(false);
+
+  function activate() {
+    // Audio is unlocked by the same deliberate gesture that starts the signal.
+    if (!mutedRef.current) {
+      try {
+        audio.current ??= createBrandAudio();
+        void audio.current.resume().catch(() => {});
+      } catch {
+        // The visual interaction also works when audio is unavailable.
+      }
+    }
+    trigger.current?.();
+  }
+
+  function toggleMute() {
+    mutedRef.current = !mutedRef.current;
+    setMuted(mutedRef.current);
+    audio.current?.mute(mutedRef.current);
+  }
+
   useEffect(() => {
+    void preloadBrandAudio().catch(() => {});
     const element = ref.current;
     if (!element) return;
-    const gradient = element.querySelector("[data-brand-light]");
-    const drawing = element.querySelector("svg");
-    const allowed = matchMedia(
-      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
-    );
-    let visible = true;
+    const trace = element.querySelector<SVGPathElement>("[data-signal-trace]");
+    const head = element.querySelector<SVGCircleElement>("[data-signal-head]");
+    const uRoute = element.querySelector<SVGPathElement>("[data-route-u]");
+    const bridge = element.querySelector<SVGPathElement>("[data-route-bridge]");
+    if (!trace || !head || !uRoute || !bridge) return;
+
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const length = trace.getTotalLength();
+    const uLength = uRoute.getTotalLength();
+    const bridgeLength = bridge.getTotalLength();
+    const kLength = length - uLength - bridgeLength;
+    const tail = 25;
+    trace.style.strokeDasharray = tail + " " + (length + tail);
+    let cycle: Cycle = { kind: "idle" };
     let frame = 0;
-    let x = 50;
-    let y = 50;
-    let targetX = 50;
-    let targetY = 50;
-    const stop = () => {
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+
+    const reset = () => {
       cancelAnimationFrame(frame);
       frame = 0;
-      element.dataset.lit = "false";
+      cycle = { kind: "idle" };
+      audio.current?.cancel();
+      element.dataset.phase = "idle";
+      trace.style.strokeDashoffset = String(tail);
     };
-    const tick = () => {
-      x += (targetX - x) * 0.18;
-      y += (targetY - y) * 0.18;
-      if (drawing) {
-        gradient?.setAttribute("cx", String(x * drawing.viewBox.baseVal.width / 100));
-        gradient?.setAttribute("cy", String(y * drawing.viewBox.baseVal.height / 100));
+    const begin = () => {
+      cycle = { kind: "running", started: performance.now(), completed: false };
+      element.dataset.phase = "accept";
+      element.dataset.reduced = String(reduced.matches);
+      trace.style.strokeDashoffset = String(tail);
+      if (!mutedRef.current) audio.current?.play("accept");
+      frame = requestAnimationFrame(tick);
+    };
+    const tick = (now: number) => {
+      if (cycle.kind === "idle") return;
+      const elapsed = now - cycle.started;
+      if (elapsed >= 760) {
+        reset();
+        return;
       }
-      if (Math.abs(targetX - x) + Math.abs(targetY - y) > 0.05)
-        frame = requestAnimationFrame(tick);
-      else frame = 0;
+      element.dataset.phase = elapsed < 70 ? "accept"
+        : elapsed < 290 ? "send"
+        : elapsed < 365 ? "handoff"
+        : elapsed < 510 ? "receive" : "complete";
+
+      if (!reduced.matches && elapsed >= 70) {
+        const distance = elapsed < 290
+          ? uLength * clamp((elapsed - 70) / 220)
+          : elapsed < 365
+            ? uLength + bridgeLength * clamp((elapsed - 290) / 75)
+            : uLength + bridgeLength + kLength * clamp((elapsed - 365) / 145);
+        trace.style.strokeDashoffset = String(tail - distance);
+        const point = trace.getPointAtLength(distance);
+        head.setAttribute("cx", String(point.x));
+        head.setAttribute("cy", String(point.y));
+      }
+      if (elapsed >= 510 && !cycle.completed) {
+        cycle.completed = true;
+        if (!mutedRef.current) audio.current?.play("complete");
+      }
+      frame = requestAnimationFrame(tick);
     };
-    const move = (event: PointerEvent) => {
-      if (!allowed.matches || !visible || document.hidden) return;
-      const bounds = (drawing ?? element).getBoundingClientRect();
-      targetX = ((event.clientX - bounds.left) / bounds.width) * 100;
-      targetY = ((event.clientY - bounds.top) / bounds.height) * 100;
-      element.dataset.lit = "true";
-      if (!frame) frame = requestAnimationFrame(tick);
+    trigger.current = () => {
+      // Every click interrupts the current inspection and starts a fresh one.
+      reset();
+      begin();
     };
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      if (!visible) stop();
-    });
+    const hide = () => { if (document.hidden) reset(); };
+    const escape = (event: KeyboardEvent) => { if (event.key === "Escape") reset(); };
+    const observer = new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) reset(); });
     observer.observe(element);
-    element.addEventListener("pointermove", move);
-    element.addEventListener("pointerleave", stop);
-    allowed.addEventListener("change", stop);
-    document.addEventListener("visibilitychange", stop);
+    document.addEventListener("visibilitychange", hide);
+    element.addEventListener("keydown", escape);
+    reduced.addEventListener("change", reset);
     return () => {
-      stop();
+      reset();
+      trigger.current = null;
       observer.disconnect();
-      element.removeEventListener("pointermove", move);
-      element.removeEventListener("pointerleave", stop);
-      allowed.removeEventListener("change", stop);
-      document.removeEventListener("visibilitychange", stop);
+      document.removeEventListener("visibilitychange", hide);
+      element.removeEventListener("keydown", escape);
+      reduced.removeEventListener("change", reset);
+      audio.current?.close();
+      audio.current = null;
     };
   }, []);
+
   return (
-    <div ref={ref} className="brand-illustration" aria-hidden="true">
-      {children}
+    <div ref={ref} className="brand-illustration" data-phase="idle">
+      <button type="button" className="brand-trigger" aria-label="Send a signal through UK" aria-describedby="brand-instructions" onClick={activate} onKeyDown={(event) => {
+        if (event.repeat && (event.key === "Enter" || event.key === " ")) event.preventDefault();
+      }}>
+        {children}
+      </button>
+      <span className="drawing-caption">{caption}</span>
+      <p id="brand-instructions" className="sr-only">Activate to send a signal from U to K, with a soft mechanical sound. Press Escape to cancel.</p>
+      <button type="button" className="brand-sound" aria-label={muted ? "Unmute interaction sound" : "Mute interaction sound"} aria-pressed={muted} onClick={toggleMute} title={muted ? "Unmute" : "Mute"}>
+        {muted ? <SpeakerSlash size={15} aria-hidden="true" /> : <SpeakerHigh size={15} aria-hidden="true" />}
+      </button>
     </div>
   );
 }

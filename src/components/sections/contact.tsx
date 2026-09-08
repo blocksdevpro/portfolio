@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
-import { CopyEmail } from "@/components/copy-email";
+import { CopyButton } from "@/components/copy-button";
 import { SpotifyNowPlaying } from "@/components/sections/spotify";
 
 export function Contact({ email }: { email: string }) {
@@ -17,7 +17,7 @@ export function Contact({ email }: { email: string }) {
           {email}
           <ArrowUpRight size={21} aria-hidden="true" />
         </a>
-        <CopyEmail email={email} />
+        <CopyButton value={email} label="Email" />
       </div>
       <SpotifyNowPlaying />
     </section>
