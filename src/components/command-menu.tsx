@@ -3,6 +3,7 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import {
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -27,6 +28,8 @@ import {
 import { Dialog } from "radix-ui";
 import { useTheme } from "next-themes";
 import { useCopyFeedback } from "@/hooks/use-copy-feedback";
+import { playFeedback } from "@/lib/feedback-audio";
+import { setThemeWithFeedback } from "@/lib/theme-feedback";
 import { scrollToSection, type SectionHash } from "@/lib/scroll-to-section";
 import { RESUME_DATA } from "@/constants/resume";
 
@@ -56,6 +59,7 @@ export function CommandMenu({
   githubUrl?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const openRef = useRef(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
   const { status: copyStatus, copy, reset: resetCopy } = useCopyFeedback();
@@ -177,26 +181,25 @@ export function CommandMenu({
   );
   const selectedCommand = filtered[selected];
 
-  function changeOpen(value: boolean) {
+  const changeOpen = useCallback((value: boolean) => {
+    if (value && !openRef.current) playFeedback("command-open");
+    openRef.current = value;
     setOpen(value);
     setQuery("");
     setSelected(0);
     resetCopy();
-  }
+  }, [resetCopy]);
 
   useEffect(() => {
     function shortcutHandler(event: KeyboardEvent) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setOpen((current) => !current);
-        setQuery("");
-        setSelected(0);
-        resetCopy();
+        changeOpen(!openRef.current);
       }
     }
     window.addEventListener("keydown", shortcutHandler);
     return () => window.removeEventListener("keydown", shortcutHandler);
-  }, [resetCopy]);
+  }, [changeOpen]);
 
   useEffect(() => {
     if (open)
@@ -214,13 +217,14 @@ export function CommandMenu({
         return;
       case "external":
         window.open(action.href, "_blank", "noopener,noreferrer");
+        playFeedback("command-confirm");
         changeOpen(false);
         return;
       case "copy":
         await copy(email);
         return;
       case "theme":
-        setTheme(action.preference);
+        setThemeWithFeedback(action.preference, setTheme);
         changeOpen(false);
         return;
       default: {
@@ -254,7 +258,9 @@ export function CommandMenu({
             event.preventDefault();
             const hash = pendingNavigation.current;
             pendingNavigation.current = null;
-            if (hash) requestAnimationFrame(() => scrollToSection(hash));
+            if (hash) requestAnimationFrame(() => {
+              if (scrollToSection(hash)) playFeedback("command-confirm");
+            });
             else trigger.current?.focus({ preventScroll: true });
           }}
         >

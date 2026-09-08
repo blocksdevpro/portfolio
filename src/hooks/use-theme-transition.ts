@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
+import { primeFeedbackAudio } from "@/lib/feedback-audio";
+import { setThemeWithFeedback } from "@/lib/theme-feedback";
 
 type ColorTheme = "light" | "dark";
 
@@ -76,6 +78,7 @@ export function useThemeTransition() {
 
   const toggleTheme = React.useCallback(
     ({ origin }: ToggleThemeOptions = {}) => {
+      primeFeedbackAudio();
       const currentIntent = intendedTheme.current ?? getDocumentTheme();
       intendedTheme.current = getOppositeTheme(currentIntent);
       latestOrigin.current = origin;
@@ -105,7 +108,7 @@ export function useThemeTransition() {
               reducedMotion ||
               !supportsViewTransitions(document)
             ) {
-              setTheme(targetTheme);
+              setThemeWithFeedback(targetTheme, setTheme);
               await waitForThemeClass(targetTheme);
               continue;
             }
@@ -134,7 +137,7 @@ export function useThemeTransition() {
 
             try {
               transition = document.startViewTransition(async () => {
-                setTheme(targetTheme);
+                setThemeWithFeedback(targetTheme, setTheme);
                 await waitForThemeClass(targetTheme);
               });
               transitionFinished = Promise.allSettled([
@@ -159,7 +162,7 @@ export function useThemeTransition() {
               await animation.finished;
             } catch {
               transition?.skipTransition();
-              setTheme(targetTheme);
+              setThemeWithFeedback(targetTheme, setTheme);
               await waitForThemeClass(targetTheme);
             } finally {
               animation?.cancel();

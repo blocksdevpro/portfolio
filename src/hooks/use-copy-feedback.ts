@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { playFeedback, primeFeedbackAudio } from "@/lib/feedback-audio";
 
 export function useCopyFeedback() {
   const [status, setStatus] = useState<
     "idle" | "pending" | "copied" | "failed"
   >("idle");
   const attempt = useRef(0);
-  const pending = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const reset = useCallback(() => {
@@ -25,8 +25,7 @@ export function useCopyFeedback() {
   );
 
   const copy = useCallback(async (text: string) => {
-    if (pending.current) return;
-    pending.current = true;
+    primeFeedbackAudio();
     const current = ++attempt.current;
     if (timer.current) clearTimeout(timer.current);
     setStatus((previous) => previous === "copied" ? "copied" : "pending");
@@ -34,13 +33,15 @@ export function useCopyFeedback() {
       await navigator.clipboard.writeText(text);
       if (current !== attempt.current) return;
       setStatus("copied");
+      playFeedback("copy-success");
       timer.current = setTimeout(() => {
         if (current === attempt.current) setStatus("idle");
       }, 2000);
     } catch {
-      if (current === attempt.current) setStatus("failed");
-    } finally {
-      pending.current = false;
+      if (current === attempt.current) {
+        setStatus("failed");
+        playFeedback("copy-failure");
+      }
     }
   }, []);
 
