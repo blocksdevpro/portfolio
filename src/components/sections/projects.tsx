@@ -31,63 +31,47 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
           className="project-entry section-inset"
           aria-labelledby={`${project.id}-title`}
         >
-          <div className="project-topline">
-            <span>
-              {String(index + 1).padStart(2, "0")} / {project.date}
-            </span>
-            <span className="project-status" data-status={project.status}>
-              <span aria-hidden="true" />
-              {project.status === "active"
-                ? "Active project"
-                : "Archived project"}
-            </span>
-          </div>
           <div className="project-title-row">
-            <h3 id={`${project.id}-title`}>{project.title}</h3>
-            <span className="project-category">{project.category}</span>
+            <div className="project-title">
+              <span className="project-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 id={`${project.id}-title`}>{project.title}</h3>
+            </div>
+            <span className="project-year">{project.date}</span>
           </div>
-          <p className="project-subtitle">{project.subtitle}</p>
           <p className="project-description">{project.description}</p>
-          <nav className="project-links" aria-label={`${project.title} links`}>
-            {project.links?.production && (
-              <a
-                href={project.links.production}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Visit project <ArrowUpRight size={15} aria-hidden="true" />
-              </a>
-            )}
-            {project.links?.github && (
-              <a
-                href={project.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GithubLogo size={16} aria-hidden="true" /> Source
-              </a>
-            )}
-          </nav>
-          <ProjectArchitecture media={project.media} number={index + 2} />
-          <ul
-            className="project-highlights"
-            aria-label={`${project.title} highlights`}
-          >
-            {project.summaryHighlights.map((highlight) => (
-              <li key={highlight}>
-                <ArrowRight size={14} aria-hidden="true" />
-                <span>{highlight}</span>
-              </li>
-            ))}
-          </ul>
-          <ul
-            className="project-stack"
-            aria-label={`${project.title} primary technologies`}
-          >
-            {project.tech.slice(0, 4).map((tech) => (
-              <li key={tech}>{tech}</li>
-            ))}
-          </ul>
+          <ProjectArchitecture media={project.media} />
+          <div className="project-bottomline">
+            <ul
+              className="project-stack"
+              aria-label={`${project.title} primary technologies`}
+            >
+              {project.primaryTech.map((tech) => (
+                <li key={tech}>{tech}</li>
+              ))}
+            </ul>
+            <nav className="project-links" aria-label={`${project.title} links`}>
+              {project.links?.production && (
+                <a
+                  href={project.links.production}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit project <ArrowUpRight size={15} aria-hidden="true" />
+                </a>
+              )}
+              {project.links?.github && (
+                <a
+                  href={project.links.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <GithubLogo size={16} aria-hidden="true" /> Source
+                </a>
+              )}
+            </nav>
+          </div>
           <details className="project-details">
             <summary>
               <span>
@@ -97,7 +81,7 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
               <CaretDown size={16} aria-hidden="true" />
             </summary>
             <div className="project-details-body">
-              <ul>
+              <ul className="project-implementation">
                 {project.highlights?.map((highlight) => (
                   <li key={highlight}>
                     <ArrowRight size={13} aria-hidden="true" />
@@ -105,7 +89,7 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 text-xs leading-6">
+              <p className="project-full-stack">
                 <span className="text-foreground">Full stack · </span>
                 {project.tech.join(" · ")}
               </p>

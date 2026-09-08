@@ -19,33 +19,29 @@ const icons = {
 
 export function ProjectArchitecture({
   media,
-  number,
 }: {
   media: Project["media"];
-  number: number;
 }) {
   return (
-    <figure className="project-architecture" data-layout={media.layout}>
+    <figure
+      className="project-architecture"
+      data-layout={media.layout}
+      aria-label={media.title}
+    >
       <div className="diagram-canvas">
-        <div className="diagram-caption">
-          <span>System overview</span>
-          <span>Fig. {String(number).padStart(2, "0")}</span>
-        </div>
-        <div className="diagram-root">
-          {media.layout === "branches" && <Cpu size={22} aria-hidden="true" />}
-          <div>
+        {media.layout === "branches" && (
+          <div className="diagram-root">
+            <Cpu size={20} aria-hidden="true" />
             <strong>{media.title}</strong>
-            <span>{media.context}</span>
           </div>
-        </div>
+        )}
         <ol className="diagram-nodes">
-          {media.nodes.map((node, index) => {
+          {media.nodes.map((node) => {
             const Icon = icons[node.icon];
             return (
               <li key={node.title}>
                 <div className="diagram-node-icon">
-                  <Icon size={22} aria-hidden="true" />
-                  <span aria-hidden="true">0{index + 1}</span>
+                  <Icon size={24} weight="duotone" aria-hidden="true" />
                 </div>
                 <strong>{node.title}</strong>
                 <p>{node.detail}</p>
@@ -53,9 +49,8 @@ export function ProjectArchitecture({
             );
           })}
         </ol>
-        <p className="diagram-note">{media.note}</p>
       </div>
-      <figcaption>{media.caption}</figcaption>
+      <figcaption className="sr-only">{media.caption}</figcaption>
     </figure>
   );
 }

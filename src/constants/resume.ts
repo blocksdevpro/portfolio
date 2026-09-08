@@ -67,36 +67,34 @@ export const RESUME_DATA: ResumeData = {
         kind: "architecture",
         layout: "pipeline",
         title: "From voice to action",
-        context: "Windows · Rust · Tauri v2",
         nodes: [
           {
             title: "Listen",
-            detail: "Local speech recognition with Parakeet",
+            detail: "Parakeet",
             icon: "microphone",
           },
           {
-            title: "Reason & act",
-            detail: "Agent runtime, memory, and tools",
+            title: "Agent",
+            detail: "Memory & tools",
             icon: "cpu",
           },
           {
-            title: "Respond",
-            detail: "Voice output with Supertone",
+            title: "Reply",
+            detail: "Supertone",
             icon: "speaker",
           },
         ],
-        note: "Language models via OpenRouter. Sensitive tools require approval.",
         caption:
-          "Boris connects local speech processing to an agent and voice output.",
+          "Parakeet recognizes speech locally, then an agent with memory and tools processes the request using language models via OpenRouter. Supertone speaks the reply. Sensitive actions require approval.",
       },
       description:
-        "A Rust-powered Windows assistant with local speech recognition, natural voice replies, and tools that ask before taking sensitive actions.",
+        "A Windows voice assistant that listens locally, remembers context, and asks before taking sensitive actions.",
       highlights: [
-        "Modular multi-crate Rust architecture for audio, inference, agent runtime, and desktop integration.",
-        "Agent capabilities including tools, sessions, memory, search, and approval-controlled shell execution.",
-        "Local wake-word detection, Parakeet speech recognition, and Supertone speech output. Language models connect through OpenRouter.",
-        "Shipped as a Tauri v2 Windows desktop app with signed in-app updates.",
+        "Separate Rust crates for audio, inference, agent tools, and desktop integration.",
+        "Language models via OpenRouter, with approval required for sensitive tools.",
+        "Local wake-word detection, persistent sessions, and signed in-app updates.",
       ],
+      primaryTech: ["Rust", "Tauri v2", "ONNX Runtime"],
       tech: [
         "Rust",
         "Tokio",
@@ -127,35 +125,33 @@ export const RESUME_DATA: ResumeData = {
         kind: "architecture",
         layout: "branches",
         title: "Calorine API",
-        context: "Rust · Axum · Tokio",
         nodes: [
           {
             title: "PostgreSQL",
-            detail: "Application data, accessed through SQLx",
+            detail: "Data",
             icon: "database",
           },
           {
             title: "Cloudflare R2",
-            detail: "Image storage for uploaded meals",
+            detail: "Photos",
             icon: "storage",
           },
           {
             title: "OpenRouter",
-            detail: "Multimodal models for meal analysis",
+            detail: "Meal analysis",
             icon: "cloud",
           },
         ],
-        note: "Google OAuth + JWT · Structured tracing · SQLx migrations",
         caption:
-          "The API connects persistent data, image storage, and meal analysis.",
+          "Calorine API connects to PostgreSQL for application data through SQLx, Cloudflare R2 for meal photos, and OpenRouter for AI meal analysis.",
       },
       description:
-        "A Rust backend for calorie tracking and fitness, with secure authentication, image storage, and AI-powered meal analysis.",
+        "The backend for a calorie-tracking app, with secure sign-in, meal photo storage, and AI nutrition analysis.",
       highlights: [
-        "Google OAuth 2.0 and JWT authentication with CSRF protection and secure session handling.",
-        "AI-powered meal analysis pipeline using Cloudflare R2 and multimodal LLM inference.",
-        "Tokio concurrency, structured tracing, typed errors, and SQLx migrations across the backend.",
+        "Google OAuth and JWT sessions with CSRF protection.",
+        "Async request handling with Tokio, structured tracing, typed errors, and SQLx migrations.",
       ],
+      primaryTech: ["Rust", "Axum", "PostgreSQL"],
       tech: [
         "Rust",
         "Axum",

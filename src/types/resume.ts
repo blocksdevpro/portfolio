@@ -15,18 +15,17 @@ export interface Project {
   status: "active" | "archived";
   description: string;
   tech: string[];
+  primaryTech: [string, string, string];
   summaryHighlights: [string, string];
   media: {
     kind: "architecture";
     layout: "pipeline" | "branches";
     title: string;
-    context: string;
     nodes: {
       title: string;
       detail: string;
       icon: "microphone" | "cpu" | "speaker" | "database" | "storage" | "cloud";
     }[];
-    note: string;
     caption: string;
   };
   links?: {
