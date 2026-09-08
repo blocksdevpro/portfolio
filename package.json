@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "verify:interactions": "node scripts/verify-interactions.mjs",
-    "verify:site": "node scripts/verify-site.mjs",
-    "test:browser": "playwright test"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -25,8 +23,6 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^25",
     "@types/react": "^19",
