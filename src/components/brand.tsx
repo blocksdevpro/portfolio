@@ -72,31 +72,33 @@ export function BrandIllustration() {
         >
           <path d="M-120 32L720 452M-120 168L600 528M0 360L720 0M165 0L885 360" />
         </g>
-        <g
-          id="brand-geometry"
-          className="drawing-mark"
-        >
-          {letters.map((letter, index) => (
-            <g key={index} data-brand-letter={index === 0 ? "U" : "K"} stroke="currentColor" strokeWidth=".8" strokeLinejoin="round">
-              {letter.sides.map((side, sideIndex) => (
-                <polygon key={sideIndex} points={side} fill="var(--background)" />
-              ))}
-              <polygon points={letter.top} fill="var(--background)" />
-              <polygon points={letter.top} fill="url(#hatching)" />
-            </g>
-          ))}
-        </g>
-        <g className="signal-circuit" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-          <path data-route-u d={route(uRoute)} className="signal-route signal-route-u" />
-          <path data-route-bridge d={route(bridgeRoute)} className="signal-bridge" strokeDasharray="3 4" />
-          <path d={route(kRoute)} className="signal-route signal-route-k" />
-          <circle cx={handoff[0]} cy={handoff[1]} r="2" className="signal-port" />
-          <circle cx={receive[0]} cy={receive[1]} r="2" className="signal-port" />
-          <path data-signal-trace d={signalRoute} className="signal-trace" strokeWidth="2" />
-          <circle data-signal-head cx={input[0]} cy={input[1]} r="2.3" className="signal-head" />
-          <circle cx={input[0]} cy={input[1]} r="3.5" className="signal-input" />
-          <circle cx={output[0]} cy={output[1]} r="3.5" className="signal-output" />
-          <circle cx={output[0]} cy={output[1]} r="8" className="signal-ack" />
+        <g data-brand-assembly>
+          <g
+            id="brand-geometry"
+            className="drawing-mark"
+          >
+            {letters.map((letter, index) => (
+              <g key={index} data-brand-letter={index === 0 ? "U" : "K"} stroke="currentColor" strokeWidth=".8" strokeLinejoin="round">
+                {letter.sides.map((side, sideIndex) => (
+                  <polygon key={sideIndex} points={side} fill="var(--background)" />
+                ))}
+                <polygon points={letter.top} fill="var(--background)" />
+                <polygon points={letter.top} fill="url(#hatching)" />
+              </g>
+            ))}
+          </g>
+          <g className="signal-circuit" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+            <path data-route-u d={route(uRoute)} className="signal-route signal-route-u" />
+            <path data-route-bridge d={route(bridgeRoute)} className="signal-bridge" strokeDasharray="3 4" />
+            <path d={route(kRoute)} className="signal-route signal-route-k" />
+            <circle cx={handoff[0]} cy={handoff[1]} r="2" className="signal-port" />
+            <circle cx={receive[0]} cy={receive[1]} r="2" className="signal-port" />
+            <path data-signal-trace d={signalRoute} className="signal-trace" strokeWidth="2" />
+            <circle data-signal-head cx={input[0]} cy={input[1]} r="2.3" className="signal-head" />
+            <circle cx={input[0]} cy={input[1]} r="3.5" className="signal-input" />
+            <circle cx={output[0]} cy={output[1]} r="3.5" className="signal-output" />
+            <circle cx={output[0]} cy={output[1]} r="8" className="signal-ack" />
+          </g>
         </g>
       </svg>
     </BrandInteraction>

@@ -6,7 +6,7 @@ import { createBrandAudio, preloadBrandAudio } from "@/lib/brand-audio";
 
 type Cycle =
   | { kind: "idle" }
-  | { kind: "running"; started: number; completed: boolean };
+  | { kind: "running"; started: number; completed: boolean; recoil: number };
 
 export function BrandInteraction({ children, caption }: { children: React.ReactNode; caption: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -42,7 +42,8 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
     const head = element.querySelector<SVGCircleElement>("[data-signal-head]");
     const uRoute = element.querySelector<SVGPathElement>("[data-route-u]");
     const bridge = element.querySelector<SVGPathElement>("[data-route-bridge]");
-    if (!trace || !head || !uRoute || !bridge) return;
+    const assembly = element.querySelector<SVGGElement>("[data-brand-assembly]");
+    if (!trace || !head || !uRoute || !bridge || !assembly) return;
 
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const length = trace.getTotalLength();
@@ -62,9 +63,15 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
       audio.current?.cancel();
       element.dataset.phase = "idle";
       trace.style.strokeDashoffset = String(tail);
+      assembly.removeAttribute("transform");
     };
     const begin = () => {
-      cycle = { kind: "running", started: performance.now(), completed: false };
+      // Convert one screen pixel to SVG units, including on narrow viewports.
+      const matrix = assembly.getScreenCTM();
+      const scale = matrix ? Math.hypot(matrix.c, matrix.d) : 1;
+      const recoil = reduced.matches ? 0 : 1 / (scale || 1);
+      cycle = { kind: "running", started: performance.now(), completed: false, recoil };
+      if (recoil) assembly.setAttribute("transform", "translate(0 " + recoil + ")");
       element.dataset.phase = "accept";
       element.dataset.reduced = String(reduced.matches);
       trace.style.strokeDashoffset = String(tail);
@@ -74,6 +81,12 @@ export function BrandInteraction({ children, caption }: { children: React.ReactN
     const tick = (now: number) => {
       if (cycle.kind === "idle") return;
       const elapsed = now - cycle.started;
+      if (cycle.recoil && elapsed < 100) {
+        const offset = cycle.recoil * Math.pow(1 - elapsed / 100, 3);
+        assembly.setAttribute("transform", "translate(0 " + offset + ")");
+      } else {
+        assembly.removeAttribute("transform");
+      }
       if (elapsed >= 760) {
         reset();
         return;
