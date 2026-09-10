@@ -1,18 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    remotePatterns: [
+    localPatterns: [{ pathname: "/portrait.webp", search: "" }],
+  },
+  async headers() {
+    return [
       {
-        protocol: "https",
-        hostname: "40ar4rk0hv.ufs.sh",
+        source: "/api/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
       },
-      {
-        protocol: "https",
-        hostname: "lastfm.freetls.fastly.net",
-      },
-    ],
+    ];
   },
 };
 

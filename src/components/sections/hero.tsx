@@ -1,134 +1,112 @@
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
-  SealCheck,
-  MapPin,
-  Globe,
+  ArrowDown,
+  ArrowUpRight,
   Clock,
+  Code,
   EnvelopeSimple,
+  Hammer,
+  LinkSimple,
+  MapPin,
   User,
-  Terminal,
-} from "@phosphor-icons/react";
-import { ResumeData } from "@/types/resume";
+} from "@phosphor-icons/react/dist/ssr";
+import { BrandIllustration } from "@/components/brand";
+import { LocalTime } from "@/components/local-time";
+import { CopyButton } from "@/components/copy-button";
+import { About } from "@/components/sections/about";
+import { Activity } from "@/components/sections/activity";
+import { Socials } from "@/components/sections/socials";
+import type { ResumeData } from "@/types/resume";
 
-interface HeroProps {
-  data: ResumeData;
-}
-
-export const Hero: React.FC<HeroProps> = ({ data }) => {
-  const [time, setTime] = useState(() =>
-    new Date().toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    })
+export function Hero({ data }: { data: ResumeData }) {
+  const currentProject = data.projects.find(
+    (project) => project.status === "active",
   );
-
-  useEffect(() => {
-    const updateTime = () => {
-      setTime(
-        new Date().toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })
-      );
-    };
-
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <section id="intro" className="space-y-8" data-reveal>
-      {/* Top Section: Profile Header */}
-      <div className="flex flex-col-reverse sm:flex-row items-start justify-between gap-8 sm:gap-12">
-        <div className="flex-1 flex flex-col gap-4">
-          <div className="space-y-1">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              {data.name}
-              <SealCheck className="w-7 h-7 text-blue-500 shrink-0" weight="duotone" />
-            </h1>
-            <p className="text-lg font-medium text-muted-foreground">
-              {data.title}
-            </p>
-          </div>
-
-          <p className="text-muted-foreground leading-relaxed max-w-lg text-lg">
-            {data.description}
-          </p>
-        </div>
-
-        <div className="relative shrink-0 self-start sm:self-center">
-          <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 shadow-lg rotate-3 transition-transform hover:rotate-0 duration-300">
-            <Image
-              src={data.avatar}
-              alt={data.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 96px, 128px"
-              priority
-            />
-          </div>
-          <div className="absolute -bottom-2 -right-2 bg-card text-[10px] font-medium px-2 py-1 rounded-full border shadow-sm flex items-center gap-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            <span className="text-muted-foreground">Open to work</span>
+    <section id="intro" aria-labelledby="profile-name">
+      <div className="profile-cover">
+        <BrandIllustration />
+        <div className="hero-identity">
+          <Image
+            src={data.avatar}
+            alt={data.name}
+            width={160}
+            height={160}
+            preload
+            fetchPriority="high"
+            className="portrait"
+          />
+          <div className="hero-name">
+            <h1 id="profile-name">{data.name}</h1>
+            <p>Backend systems & local AI.</p>
           </div>
         </div>
       </div>
-
-      {/* Bottom Section: Info Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-sm text-muted-foreground">
-        {/* Left Card */}
-        <div className="border bg-card rounded-lg p-5 space-y-3">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <Terminal className="w-4 h-4 shrink-0" />
-
-            <span className="truncate">
-              {data.title}
-            </span>
+      <div className="profile-facts section-inset">
+        <dl className="profile-column">
+          <div className="profile-fact">
+            <dt><Code size={16} aria-hidden="true" /><span className="sr-only">Role</span></dt>
+            <dd>{data.title}</dd>
           </div>
-          <div className="flex items-center gap-3">
-            <MapPin className="w-4 h-4 shrink-0" />
-            <span>{data.location}</span>
+          {currentProject && (
+            <div className="profile-fact">
+              <dt><Hammer size={16} aria-hidden="true" /><span className="sr-only">Current project</span></dt>
+              <dd>Building <a href={`#${currentProject.id}`}>{currentProject.title}</a></dd>
+            </div>
+          )}
+          <div className="profile-fact">
+            <dt><MapPin size={16} aria-hidden="true" /><span className="sr-only">Location</span></dt>
+            <dd>{data.location}</dd>
           </div>
-          <div className="flex items-center gap-3">
-            <Globe className="w-4 h-4 shrink-0" />
-            <a
-              href={data.website}
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-foreground hover:underline underline-offset-4"
-            >
-              {data.website.replace(/^https?:\/\//, "")}
-            </a>
+          <div className="profile-fact">
+            <dt><LinkSimple size={16} aria-hidden="true" /><span className="sr-only">Website</span></dt>
+            <dd className="profile-copy-value">
+              <a href={data.website}>{new URL(data.website).hostname}</a>
+              <CopyButton value={data.website} label="Website" />
+            </dd>
           </div>
-        </div>
-
-        {/* Right Card */}
-        <div className="border bg-card rounded-lg p-5 space-y-3">
-          <div className="flex items-center gap-3">
-            <Clock className="w-4 h-4 shrink-0" />
-            <span>{time} (Local)</span>
+        </dl>
+        <dl className="profile-column">
+          <div className="profile-fact">
+            <dt><Clock size={16} aria-hidden="true" /><span className="sr-only">Local time</span></dt>
+            <dd><LocalTime timezone={data.timezone} /></dd>
           </div>
-          <div className="flex items-center gap-3">
-            <EnvelopeSimple className="w-4 h-4 shrink-0" />
-            <a
-              href={`mailto:${data.email}`}
-              className="hover:text-foreground hover:underline underline-offset-4"
-            >
-              {data.email}
-            </a>
+          <div className="profile-fact">
+            <dt><EnvelopeSimple size={16} aria-hidden="true" /><span className="sr-only">Email</span></dt>
+            <dd className="profile-copy-value">
+              <a href={`mailto:${data.email}`}>{data.email}</a>
+              <CopyButton value={data.email} label="Email" />
+            </dd>
           </div>
-          <div className="flex items-center gap-3">
-            <User className="w-4 h-4 shrink-0" />
-            <span>{data.pronouns || "he/him"}</span>
-          </div>
+          {data.pronouns && (
+            <div className="profile-fact">
+              <dt><User size={16} aria-hidden="true" /><span className="sr-only">Pronouns</span></dt>
+              <dd>{data.pronouns}</dd>
+            </div>
+          )}
+        </dl>
+      </div>
+      <div className="profile-socials section-inset">
+        <span className="follow-note" aria-hidden="true">
+          follow me
+          <svg viewBox="0 0 48 40" fill="none">
+            <path d="M5 3C4 22 17 32 40 29M32 22L41 29L31 34" />
+          </svg>
+        </span>
+        <Socials socials={data.socials} />
+      </div>
+      <Activity />
+      <div className="profile-introduction section-inset">
+        <About />
+        <div className="hero-actions">
+          <a className="action-link" href="#projects">
+            Explore my work <ArrowDown size={16} aria-hidden="true" />
+          </a>
+          <a className="action-link" href={"mailto:" + data.email}>
+            Get in touch <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>
   );
-};
+}

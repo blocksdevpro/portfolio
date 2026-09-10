@@ -1,146 +1,104 @@
-import React from "react";
 import {
   ArrowRight,
   ArrowUpRight,
+  CaretDown,
   GithubLogo,
-  Link as LinkIcon,
-} from "@phosphor-icons/react";
-import { ResumeData } from "@/types/resume";
+} from "@phosphor-icons/react/dist/ssr";
+import { SectionHeading } from "@/components/section-heading";
+import { ProjectArchitecture } from "@/components/project-architecture";
+import type { ResumeData } from "@/types/resume";
 
-interface ProjectsProps {
-  projects: ResumeData["projects"];
-}
-
-type Project = ResumeData["projects"][number];
-
-interface ProjectEntryProps {
-  project: Project;
-}
-
-const ProjectMark: React.FC<Pick<Project, "icon" | "title">> = ({
-  icon,
-  title,
-}) => {
-  if (!icon) {
-    return null;
-  }
-
-  if (icon.startsWith("http") || icon.startsWith("/")) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img alt="" className="size-5 object-contain" src={icon} />
-    );
-  }
-
+export function Projects({ projects }: { projects: ResumeData["projects"] }) {
   return (
-    <span
-      aria-label={`${title} mark`}
-      className="text-lg grayscale transition duration-200 group-hover:grayscale-0"
-      role="img"
+    <section
+      id="projects"
+      className="portfolio-section"
+      tabIndex={-1}
+      aria-labelledby="projects-heading"
     >
-      {icon}
-    </span>
-  );
-};
-
-const ProjectEntry: React.FC<ProjectEntryProps> = ({ project }) => {
-  return (
-    <article className="group border-b border-border py-6 first:pt-5 last:pb-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-        <div className="min-w-0">
-          <p className="mb-2 font-mono text-[11px] text-muted-foreground">
-            {project.date}
-          </p>
-          <div className="flex items-start gap-2.5">
-            <ProjectMark icon={project.icon} title={project.title} />
-            <h3 className="text-base font-semibold leading-snug tracking-tight text-foreground">
-              {project.title}
-            </h3>
+      <SectionHeading
+        number="01"
+        id="projects-heading"
+        sectionId="projects"
+        detail={`${projects.length} projects`}
+      >
+        Selected work
+      </SectionHeading>
+      {projects.map((project, index) => (
+        <article
+          key={project.id}
+          id={project.id}
+          className="project-entry section-inset"
+          aria-labelledby={`${project.id}-title`}
+        >
+          <div className="project-title-row">
+            <div className="project-title">
+              <span className="project-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 id={`${project.id}-title`}>{project.title}</h3>
+            </div>
+            <span className="project-year">{project.date}</span>
           </div>
-        </div>
-
-        {(project.links?.production || project.links?.github) && (
-          <nav
-            aria-label={`${project.title} links`}
-            className="flex shrink-0 items-center gap-4 pl-7.5 sm:pl-0 sm:pt-6"
-          >
-            {project.links.production && (
-              <a
-                href={project.links.production}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group/link inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-blue-500 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
-              >
-                <LinkIcon className="size-3.5" />
-                Live
-                <ArrowUpRight className="size-3 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
-              </a>
-            )}
-            {project.links.github && (
-              <a
-                href={project.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group/link inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-blue-500 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
-              >
-                <GithubLogo className="size-3.5" />
-                Source
-                <ArrowUpRight className="size-3 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
-              </a>
-            )}
-          </nav>
-        )}
-      </div>
-
-      <p className="mt-4 max-w-[640px] text-sm leading-relaxed text-muted-foreground">
-        {project.description}
-      </p>
-
-      {project.highlights && project.highlights.length > 0 && (
-        <ul className="mt-4 space-y-2">
-          {project.highlights.map((highlight) => (
-            <li
-              key={highlight}
-              className="flex items-start gap-2.5 text-sm leading-5 text-muted-foreground"
+          <p className="project-description">{project.description}</p>
+          <ProjectArchitecture media={project.media} />
+          <div className="project-bottomline">
+            <ul
+              className="project-stack"
+              aria-label={`${project.title} primary technologies`}
             >
-              <ArrowRight
-                aria-hidden="true"
-                className="mt-1 size-3 shrink-0 text-muted-foreground/45 transition-[color,transform] duration-200 group-hover:translate-x-0.5 group-hover:text-muted-foreground"
-                weight="bold"
-              />
-              <span>{highlight}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div className="mt-4 flex flex-wrap items-center gap-1.5">
-        <span className="mr-1 font-mono text-[10px] uppercase tracking-wider text-foreground/70">
-          Stack
-        </span>
-        {project.tech.map((tech) => (
-          <span
-            key={tech}
-            className="inline-flex rounded-md border border-border bg-muted/50 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
-          >
-            {tech}
-          </span>
-        ))}
-      </div>
-    </article>
-  );
-};
-
-export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
-  return (
-    <section id="projects" className="space-y-6" data-reveal>
-      <h2 className="text-xl font-bold text-foreground">Projects</h2>
-
-      <div className="border-t border-border">
-        {projects.map((project) => (
-          <ProjectEntry key={project.title} project={project} />
-        ))}
-      </div>
+              {project.primaryTech.map((tech) => (
+                <li key={tech}>{tech}</li>
+              ))}
+            </ul>
+            <nav className="project-links" aria-label={`${project.title} links`}>
+              {project.links?.production && (
+                <a
+                  href={project.links.production}
+                  aria-label={`Visit project: ${project.title}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit project <ArrowUpRight size={15} aria-hidden="true" />
+                </a>
+              )}
+              {project.links?.github && (
+                <a
+                  href={project.links.github}
+                  aria-label={`Source code for ${project.title} on GitHub`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <GithubLogo size={16} aria-hidden="true" /> Source
+                </a>
+              )}
+            </nav>
+          </div>
+          <details className="project-details">
+            <summary>
+              <span>
+                Engineering details
+                <span className="sr-only"> for {project.title}</span>
+              </span>
+              <CaretDown size={16} aria-hidden="true" />
+            </summary>
+            <div className="project-details-body">
+              <ul className="project-implementation">
+                {project.highlights?.map((highlight) => (
+                  <li key={highlight}>
+                    <ArrowRight size={13} aria-hidden="true" />
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="project-full-stack">
+                <span className="text-foreground">Full stack · </span>
+                {project.tech.join(" · ")}
+              </p>
+            </div>
+          </details>
+        </article>
+      ))}
     </section>
   );
-};
+}

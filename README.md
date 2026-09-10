@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Uttam Kumbhakar's portfolio
 
-## Getting Started
+Source for [blocksdev.pro](https://blocksdev.pro), my portfolio for Rust backend work and projects. The site uses Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
 
-First, run the development server:
+## Run locally
+
+Install the dependencies and start the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The Last.fm widget needs two optional environment variables. Copy `.env.example` to `.env.local`, then set `LASTFM_API_KEY` and `LASTFM_USERNAME`. The widget shows an unavailable state when either value is missing.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Available commands
 
-## Learn More
+```bash
+bun run dev        # Start the development server
+bun run build      # Create a production build
+bun run start      # Serve the production build
+bun run lint       # Run ESLint
+bun run typecheck  # Check TypeScript types
+bun run verify:seo # Check SEO against a running production server on port 3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/app` contains the page, metadata, styles, sitemap, robots file, and API routes.
+- `src/components` contains page sections and interactive components.
+- `src/constants/resume.ts` contains profile details, experience, projects, skills, and links.
+- `src/lib` contains navigation and external data parsing helpers.
+- `public/portrait.webp` is the profile image.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+GitHub activity loads through `/api/contributions`. Recent music loads through `/api/spotify`, which uses Last.fm data and links tracks to Spotify search. Vercel Analytics loads only on Vercel deployments.
 
-## Deploy on Vercel
+## Search and sharing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`src/lib/seo.ts` owns the search title, description, canonical origin, and typed structured data. The homepage supplies its own metadata and profile graph, so missing pages do not inherit a homepage canonical or profile markup. Social previews use the generated 1200 × 630 Open Graph image.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To verify the production response, run `bun run build` and `bun run start`, then run `bun run verify:seo` in another terminal. For a different port or a deployed URL, use `bun run verify:seo -- https://blocksdev.pro`.
+
+See [SEO maintenance and deployment checks](docs/seo.md) for what to verify after publishing.

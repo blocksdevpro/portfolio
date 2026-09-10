@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
+import { primeFeedbackAudio } from "@/lib/feedback-audio";
+import { setThemeWithFeedback } from "@/lib/theme-feedback";
 
 type ColorTheme = "light" | "dark";
 
@@ -21,6 +23,14 @@ type ViewTransitionAnimationOptions = KeyframeAnimationOptions & {
 function supportsViewTransitions(value: Document): boolean {
   const candidate: unknown = Reflect.get(value, "startViewTransition");
   return typeof candidate === "function";
+}
+
+function getDocumentTheme(): ColorTheme {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function getOppositeTheme(theme: ColorTheme): ColorTheme {
+  return theme === "dark" ? "light" : "dark";
 }
 
 function waitForThemeClass(theme: ColorTheme): Promise<void> {
@@ -53,69 +63,120 @@ function waitForThemeClass(theme: ColorTheme): Promise<void> {
 
 export function useThemeTransition() {
   const { resolvedTheme, setTheme } = useTheme();
+  const intendedTheme = React.useRef<ColorTheme | undefined>(undefined);
   const transitionInProgress = React.useRef(false);
-  const nextTheme: ColorTheme =
-    resolvedTheme === "dark" ? "light" : "dark";
+  const latestOrigin = React.useRef<ThemeTransitionOrigin | undefined>(undefined);
+
+  React.useEffect(() => {
+    if (
+      !transitionInProgress.current &&
+      (resolvedTheme === "light" || resolvedTheme === "dark")
+    ) {
+      intendedTheme.current = resolvedTheme;
+    }
+  }, [resolvedTheme]);
 
   const toggleTheme = React.useCallback(
-    async ({ origin }: ToggleThemeOptions = {}) => {
+    ({ origin }: ToggleThemeOptions = {}) => {
+      primeFeedbackAudio();
+      const currentIntent = intendedTheme.current ?? getDocumentTheme();
+      intendedTheme.current = getOppositeTheme(currentIntent);
+      latestOrigin.current = origin;
+
       if (transitionInProgress.current) {
         return;
       }
 
-      const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-
-      if (!origin || reducedMotion || !supportsViewTransitions(document)) {
-        setTheme(nextTheme);
-        return;
-      }
-
       transitionInProgress.current = true;
-      const root = document.documentElement;
-      const farthestX = Math.max(origin.x, window.innerWidth - origin.x);
-      const farthestY = Math.max(origin.y, window.innerHeight - origin.y);
-      const radius = Math.hypot(farthestX, farthestY);
-      const animationOptions: ViewTransitionAnimationOptions = {
-        duration: 460,
-        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-        fill: "both",
-        pseudoElement: "::view-transition-new(root)",
-      };
 
-      root.dataset.themeTransitioning = "true";
+      void (async () => {
+        try {
+          while (true) {
+            const targetTheme = intendedTheme.current ?? getDocumentTheme();
 
-      try {
-        const transition = document.startViewTransition(async () => {
-          setTheme(nextTheme);
-          await waitForThemeClass(nextTheme);
-        });
+            if (getDocumentTheme() === targetTheme) {
+              return;
+            }
 
-        await transition.ready;
+            const reducedMotion = window.matchMedia(
+              "(prefers-reduced-motion: reduce)",
+            ).matches;
+            const transitionOrigin = latestOrigin.current;
 
-        const animation = root.animate(
-          [
-            {
-              clipPath: `circle(0px at ${origin.x}px ${origin.y}px)`,
-            },
-            {
-              clipPath: `circle(${radius}px at ${origin.x}px ${origin.y}px)`,
-            },
-          ],
-          animationOptions
-        );
+            if (
+              !transitionOrigin ||
+              reducedMotion ||
+              !supportsViewTransitions(document)
+            ) {
+              setThemeWithFeedback(targetTheme, setTheme);
+              await waitForThemeClass(targetTheme);
+              continue;
+            }
 
-        await Promise.allSettled([animation.finished, transition.finished]);
-      } catch {
-        setTheme(nextTheme);
-      } finally {
-        delete root.dataset.themeTransitioning;
-        transitionInProgress.current = false;
-      }
+            const root = document.documentElement;
+            const farthestX = Math.max(
+              transitionOrigin.x,
+              window.innerWidth - transitionOrigin.x,
+            );
+            const farthestY = Math.max(
+              transitionOrigin.y,
+              window.innerHeight - transitionOrigin.y,
+            );
+            const radius = Math.hypot(farthestX, farthestY);
+            const animationOptions: ViewTransitionAnimationOptions = {
+              duration: 280,
+              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+              fill: "both",
+              pseudoElement: "::view-transition-new(root)",
+            };
+            let transition: ViewTransition | undefined;
+            let animation: Animation | undefined;
+            let transitionFinished: Promise<unknown> = Promise.resolve();
+
+            root.dataset.themeTransitioning = "true";
+
+            try {
+              transition = document.startViewTransition(async () => {
+                setThemeWithFeedback(targetTheme, setTheme);
+                await waitForThemeClass(targetTheme);
+              });
+              transitionFinished = Promise.allSettled([
+                transition.finished,
+                transition.updateCallbackDone,
+              ]);
+
+              await transition.ready;
+
+              animation = root.animate(
+                [
+                  {
+                    clipPath: `circle(0px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                  },
+                  {
+                    clipPath: `circle(${radius}px at ${transitionOrigin.x}px ${transitionOrigin.y}px)`,
+                  },
+                ],
+                animationOptions,
+              );
+
+              await animation.finished;
+            } catch {
+              transition?.skipTransition();
+              setThemeWithFeedback(targetTheme, setTheme);
+              await waitForThemeClass(targetTheme);
+            } finally {
+              animation?.cancel();
+              await transitionFinished;
+              delete root.dataset.themeTransitioning;
+            }
+          }
+        } finally {
+          transitionInProgress.current = false;
+        }
+      })();
     },
-    [nextTheme, setTheme]
+    [setTheme],
   );
 
-  return { nextTheme, toggleTheme };
+  return { toggleTheme };
 }

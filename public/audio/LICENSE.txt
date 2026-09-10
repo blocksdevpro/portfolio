@@ -1,0 +1,14 @@
+UK interaction sounds
+
+Source: Kenney, Interface Sounds 1.0 (11 February 2020)
+https://kenney.nl/assets/interface-sounds
+
+uk-press.ogg: Audio/switch_001.ogg
+uk-release.ogg: Audio/switch_002.ogg
+
+License: Creative Commons Zero (CC0 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Created and distributed by Kenney (www.kenney.nl).
+Free to use in personal, educational, and commercial projects.
+Samples are unmodified; playback rate and filtering are applied in the browser.

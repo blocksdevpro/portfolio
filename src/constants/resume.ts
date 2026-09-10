@@ -1,13 +1,14 @@
-import { ResumeData } from "@/types/resume";
+import type { ResumeData } from "@/types/resume";
 
 export const RESUME_DATA: ResumeData = {
   name: "Uttam Kumbhakar",
   title: "Rust Backend Developer",
-  description: "Rust · Async backend systems · Local AI applications",
-  avatar:
-    "https://40ar4rk0hv.ufs.sh/f/9Pu2ZyQIW8BFkxw2CxtHqGNu7tCzy62FwhZjiv9UlmR30p15",
+  description:
+    "I build backend systems in Rust, local AI apps, and developer tools.",
+  avatar: "/portrait.webp",
 
   location: "Jharkhand, India",
+  timezone: "Asia/Kolkata",
   email: "mail@blocksdev.pro",
   website: "https://blocksdev.pro",
   summary:
@@ -52,16 +53,48 @@ export const RESUME_DATA: ResumeData = {
   ],
   projects: [
     {
-      title: "Boris — Local-First AI Voice Assistant",
+      id: "boris",
+      title: "Boris",
+      category: "DESKTOP APPLICATION",
+      subtitle: "A voice assistant for your desktop",
       date: "2026",
-      icon: "🎙️",
-      description:
-        "A local-first AI voice assistant for Windows with wake-word detection, speech recognition, LLM-driven tools, and speech synthesis. Superteam Grant recipient ($200 USDG).",
-      highlights: [
-        "Modular multi-crate Rust architecture for audio, inference, agent runtime, and desktop integration.",
-        "Agent capabilities including tools, sessions, memory, search, and approval-controlled shell execution.",
-        "Shipped as a Tauri v2 Windows desktop app with local inference and in-app updates.",
+      status: "active",
+      summaryHighlights: [
+        "Local speech recognition, built into a Windows desktop app.",
+        "An agent with memory, tools, and approval-controlled actions.",
       ],
+      media: {
+        kind: "architecture",
+        layout: "pipeline",
+        title: "From voice to action",
+        nodes: [
+          {
+            title: "Listen",
+            detail: "Parakeet",
+            icon: "microphone",
+          },
+          {
+            title: "Agent",
+            detail: "Memory & tools",
+            icon: "cpu",
+          },
+          {
+            title: "Reply",
+            detail: "Supertone",
+            icon: "speaker",
+          },
+        ],
+        caption:
+          "Parakeet recognizes speech locally, then an agent with memory and tools processes the request using language models via OpenRouter. Supertone speaks the reply. Sensitive actions require approval.",
+      },
+      description:
+        "A Windows voice assistant that listens locally, remembers context, and asks before taking sensitive actions.",
+      highlights: [
+        "Separate Rust crates for audio, inference, agent tools, and desktop integration.",
+        "Language models via OpenRouter, with approval required for sensitive tools.",
+        "Local wake-word detection, persistent sessions, and signed in-app updates.",
+      ],
+      primaryTech: ["Rust", "Tauri v2", "ONNX Runtime"],
       tech: [
         "Rust",
         "Tokio",
@@ -78,16 +111,47 @@ export const RESUME_DATA: ResumeData = {
       },
     },
     {
-      title: "Calorine API — Calorie Tracking & Fitness Backend",
+      id: "calorine",
+      title: "Calorine API",
+      category: "BACKEND SYSTEM",
+      subtitle: "The backend behind better habits",
       date: "2026",
-      icon: "🥗",
-      description:
-        "A production-grade REST API for calorie tracking and fitness, with secure authentication, image storage, and AI-powered meal analysis.",
-      highlights: [
-        "Google OAuth 2.0 and JWT authentication with CSRF protection and secure session handling.",
-        "AI-powered meal analysis pipeline using Cloudflare R2 and multimodal LLM inference.",
-        "Tokio concurrency, structured tracing, typed errors, and SQLx migrations across the backend.",
+      status: "active",
+      summaryHighlights: [
+        "Google OAuth and JWT authentication with CSRF protection.",
+        "Image storage and AI meal analysis behind a typed Rust API.",
       ],
+      media: {
+        kind: "architecture",
+        layout: "branches",
+        title: "Calorine API",
+        nodes: [
+          {
+            title: "PostgreSQL",
+            detail: "Data",
+            icon: "database",
+          },
+          {
+            title: "Cloudflare R2",
+            detail: "Photos",
+            icon: "storage",
+          },
+          {
+            title: "OpenRouter",
+            detail: "Meal analysis",
+            icon: "cloud",
+          },
+        ],
+        caption:
+          "Calorine API connects to PostgreSQL for application data through SQLx, Cloudflare R2 for meal photos, and OpenRouter for AI meal analysis.",
+      },
+      description:
+        "The backend for a calorie-tracking app, with secure sign-in, meal photo storage, and AI nutrition analysis.",
+      highlights: [
+        "Google OAuth and JWT sessions with CSRF protection.",
+        "Async request handling with Tokio, structured tracing, typed errors, and SQLx migrations.",
+      ],
+      primaryTech: ["Rust", "Axum", "PostgreSQL"],
       tech: [
         "Rust",
         "Axum",
@@ -97,9 +161,10 @@ export const RESUME_DATA: ResumeData = {
         "JWT",
         "Google OAuth 2.0",
         "Cloudflare R2",
-        "OpenAI API",
+        "OpenRouter",
       ],
       links: {
+        production: "https://calorine.in",
         github: "https://github.com/blocksdevpro/rust-backend",
       },
     },

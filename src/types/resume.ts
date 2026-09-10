@@ -7,20 +7,32 @@ export interface Experience {
 }
 
 export interface Project {
+  id: string;
   title: string;
+  category: string;
+  subtitle: string;
   date: string;
+  status: "active" | "archived";
   description: string;
   tech: string[];
-  icon?: string; // NEW: emoji or text icon
+  primaryTech: [string, string, string];
+  summaryHighlights: [string, string];
+  media: {
+    kind: "architecture";
+    layout: "pipeline" | "branches";
+    title: string;
+    nodes: {
+      title: string;
+      detail: string;
+      icon: "microphone" | "cpu" | "speaker" | "database" | "storage" | "cloud";
+    }[];
+    caption: string;
+  };
   links?: {
     production?: string;
     github?: string;
   };
-  metrics?: Array<{ label: string; value: string }>;
   highlights?: string[];
-  architecture?: string;
-  features?: string[];
-  challenges?: string;
 }
 
 export interface Education {
@@ -35,6 +47,7 @@ export interface ResumeData {
   description: string;
   avatar: string;
   location: string;
+  timezone: string;
   email: string;
   website: string;
   summary: string;
