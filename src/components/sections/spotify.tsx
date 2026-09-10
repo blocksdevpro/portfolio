@@ -75,7 +75,7 @@ export function SpotifyNowPlaying() {
           </span>
         </div>
       ) : music.kind === "loading" ? (
-        <div className="music-row">
+        <div className="music-row music-row--loading">
           <LoadingSpinner label="Loading listening activity" />
         </div>
       ) : (

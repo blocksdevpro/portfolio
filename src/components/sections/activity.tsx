@@ -90,7 +90,7 @@ export function Activity() {
       <h2 className="sr-only">GitHub activity</h2>
       <div className="activity-body section-inset" data-nosnippet>
         {activity.kind === "loading" && (
-          <div className="widget-unavailable">
+          <div className="activity-loading">
             <LoadingSpinner label="Loading GitHub activity" />
           </div>
         )}
