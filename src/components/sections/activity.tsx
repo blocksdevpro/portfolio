@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
   Tooltip,
   TooltipContent,
@@ -89,8 +90,8 @@ export function Activity() {
       <h2 className="sr-only">GitHub activity</h2>
       <div className="activity-body section-inset" data-nosnippet>
         {activity.kind === "loading" && (
-          <div className="widget-unavailable" role="status">
-            Loading GitHub activity…
+          <div className="widget-unavailable">
+            <LoadingSpinner label="Loading GitHub activity" />
           </div>
         )}
         {activity.kind === "unavailable" && (

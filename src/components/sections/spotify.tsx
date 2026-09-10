@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { MusicNotes } from "@phosphor-icons/react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { parseMusic, type MusicData } from "@/lib/widget-data";
 
 export function SpotifyNowPlaying() {
@@ -73,15 +74,17 @@ export function SpotifyNowPlaying() {
             <span> · {music.artist}</span>
           </span>
         </div>
+      ) : music.kind === "loading" ? (
+        <div className="music-row">
+          <LoadingSpinner label="Loading listening activity" />
+        </div>
       ) : (
         <div className="music-row">
           <MusicNotes size={17} aria-hidden="true" />
           <span>
-            {music.kind === "loading"
-              ? "Loading listening activity…"
-              : music.kind === "idle"
-                ? "Nothing on the turntable right now."
-                : "Listening activity is unavailable."}
+            {music.kind === "idle"
+              ? "Nothing on the turntable right now."
+              : "Listening activity is unavailable."}
           </span>
         </div>
       )}

@@ -955,6 +955,18 @@ button.activity-day:is(:hover, :focus-visible, [data-popup-open]) {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+.loading-spinner {
+  display: inline-flex;
+  color: var(--muted-foreground);
+}
+.loading-spinner > svg {
+  animation: loading-spin 1s linear infinite;
+}
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .widget-unavailable {
   min-height: 170px;
   display: flex;
