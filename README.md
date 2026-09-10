@@ -34,7 +34,7 @@ bun run verify:seo # Check SEO against a running production server on port 3000
 - `src/lib` contains navigation and external data parsing helpers.
 - `public/portrait.webp` is the profile image.
 
-GitHub activity loads through `/api/contributions`. Recent music loads through `/api/spotify`, which uses Last.fm data and links tracks to Spotify search. Vercel Analytics loads only on Vercel deployments.
+GitHub activity loads through `/api/contributions`, which reads the public GitHub contribution calendar directly and falls back to the GitHub Contributions API if GitHub is unavailable or its markup changes. No GitHub token is required. Successful responses are cached for one hour; failures include the provider and error in the server logs and are not cached. Recent music loads through `/api/spotify`, which uses Last.fm data and links tracks to Spotify search. Vercel Analytics loads only on Vercel deployments.
 
 ## Search and sharing
 
