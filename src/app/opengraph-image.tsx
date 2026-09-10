@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
+import { RESUME_DATA } from "@/constants/resume";
 
-export const alt =
-  "Uttam Kumbhakar. Rust backend developer. Async systems, local AI, and developer tools.";
+export const alt = `${RESUME_DATA.name}. ${RESUME_DATA.title}. Async systems, local AI, and developer tools.`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -46,7 +46,9 @@ export default function OpenGraphImage() {
               strokeLinejoin="miter"
             />
           </svg>
-          <span style={{ fontSize: 19, color: "#a1a1aa" }}>blocksdev.pro</span>
+          <span style={{ fontSize: 19, color: "#a1a1aa" }}>
+            {new URL(RESUME_DATA.website).hostname}
+          </span>
         </div>
         <div
           style={{
@@ -56,10 +58,10 @@ export default function OpenGraphImage() {
             marginBottom: 16,
           }}
         >
-          RUST BACKEND DEVELOPER
+          {RESUME_DATA.title.toUpperCase()}
         </div>
         <div style={{ fontSize: 68, fontWeight: 600, letterSpacing: -3 }}>
-          Uttam Kumbhakar
+          {RESUME_DATA.name}
         </div>
         <div
           style={{
@@ -82,7 +84,7 @@ export default function OpenGraphImage() {
             color: "#a1a1aa",
           }}
         >
-          Jharkhand, India
+          {RESUME_DATA.location}
         </div>
       </div>
     </div>,

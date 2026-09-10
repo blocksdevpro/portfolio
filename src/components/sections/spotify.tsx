@@ -42,7 +42,7 @@ export function SpotifyNowPlaying() {
   }, []);
 
   return (
-    <div className="music-widget" data-hidden={hidden}>
+    <div className="music-widget" data-hidden={hidden} data-nosnippet>
       {music.kind === "track" ? (
         <div className="music-row">
           {music.albumArt ? (

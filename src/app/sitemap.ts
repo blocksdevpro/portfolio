@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
-import { RESUME_DATA } from "@/constants/resume";
+import { SITE_URL } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: RESUME_DATA.website, changeFrequency: "monthly", priority: 1 },
-  ];
+  return [{ url: SITE_URL }];
 }

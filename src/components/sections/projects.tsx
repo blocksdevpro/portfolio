@@ -55,6 +55,7 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
               {project.links?.production && (
                 <a
                   href={project.links.production}
+                  aria-label={`Visit project: ${project.title}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -64,6 +65,7 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
               {project.links?.github && (
                 <a
                   href={project.links.github}
+                  aria-label={`Source code for ${project.title} on GitHub`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -10,6 +10,19 @@ import {
 import { RESUME_DATA } from "@/constants/resume";
 import { parseContributions, type ActivityData } from "@/lib/widget-data";
 
+const dayFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const monthFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  timeZone: "UTC",
+});
+const dateLabel = (date: string) =>
+  dayFormatter.format(new Date(date + "T00:00:00Z"));
+
 export function Activity() {
   const [activity, setActivity] = useState<ActivityData | { kind: "loading" }>({
     kind: "loading",
@@ -46,23 +59,19 @@ export function Activity() {
   const first = activity.kind === "ready" ? activity.days[0] : undefined;
   const padding = first ? new Date(first.date + "T00:00:00Z").getUTCDay() : 0;
   const last = activity.kind === "ready" ? activity.days.at(-1) : undefined;
-  const dateLabel = (date: string) =>
-    new Intl.DateTimeFormat("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      timeZone: "UTC",
-    }).format(new Date(date + "T00:00:00Z"));
+  const openEntry =
+    activity.kind === "ready"
+      ? activity.days.find((entry) => entry.date === openDate)
+      : undefined;
   const months =
     activity.kind === "ready"
       ? activity.days.flatMap((entry, index) =>
           entry.date.endsWith("-01")
             ? [
                 {
-                  label: new Intl.DateTimeFormat("en", {
-                    month: "short",
-                    timeZone: "UTC",
-                  }).format(new Date(entry.date + "T00:00:00Z")),
+                  label: monthFormatter.format(
+                    new Date(entry.date + "T00:00:00Z"),
+                  ),
                   column: Math.floor((index + padding) / 7) + 1,
                   date: entry.date,
                 },
@@ -78,7 +87,7 @@ export function Activity() {
       aria-label="GitHub activity"
     >
       <h2 className="sr-only">GitHub activity</h2>
-      <div className="activity-body section-inset">
+      <div className="activity-body section-inset" data-nosnippet>
         {activity.kind === "loading" && (
           <div className="widget-unavailable" role="status">
             Loading GitHub activity…
@@ -131,26 +140,21 @@ export function Activity() {
                 ))}
               </div>
               <TooltipProvider delay={100}>
-                <div className="activity-grid">
-                  {Array.from({ length: padding }, (_, index) => (
-                    <span key={"pad-" + index} aria-hidden="true" />
-                  ))}
-                  {activity.days.map((entry, index) => (
-                    <Tooltip
-                      key={entry.date}
-                      triggerId={`activity-${entry.date}`}
-                      open={openDate === entry.date}
-                      onOpenChange={(open) =>
-                        setOpenDate((current) =>
-                          open
-                            ? entry.date
-                            : current === entry.date
-                              ? null
-                              : current,
-                        )
-                      }
-                    >
+                <Tooltip
+                  open={openDate !== null}
+                  triggerId={openDate ? `activity-${openDate}` : null}
+                  onOpenChange={(open, details) => {
+                    const date = details.trigger?.getAttribute("data-date");
+                    setOpenDate(open && date ? date : null);
+                  }}
+                >
+                  <div className="activity-grid">
+                    {Array.from({ length: padding }, (_, index) => (
+                      <span key={"pad-" + index} aria-hidden="true" />
+                    ))}
+                    {activity.days.map((entry, index) => (
                       <TooltipTrigger
+                        key={entry.date}
                         id={`activity-${entry.date}`}
                         closeOnClick={false}
                         type="button"
@@ -213,18 +217,22 @@ export function Activity() {
                           });
                         }}
                       />
-                      <TooltipContent className="grid gap-1">
-                        <strong className="font-semibold">
-                          {entry.count}{" "}
-                          {entry.count === 1 ? "contribution" : "contributions"}
-                        </strong>
-                        <span className="font-mono text-[11px] opacity-75">
-                          {dateLabel(entry.date)}
-                        </span>
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                  {openEntry && (
+                    <TooltipContent className="grid gap-1">
+                      <strong className="font-semibold">
+                        {openEntry.count}{" "}
+                        {openEntry.count === 1
+                          ? "contribution"
+                          : "contributions"}
+                      </strong>
+                      <span className="font-mono text-[11px] opacity-75">
+                        {dateLabel(openEntry.date)}
+                      </span>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
               </TooltipProvider>
             </div>
             <p className="activity-scroll-hint">

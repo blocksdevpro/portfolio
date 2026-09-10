@@ -32,7 +32,8 @@ export function Hero({ data }: { data: ResumeData }) {
             alt={data.name}
             width={160}
             height={160}
-            priority
+            preload
+            fetchPriority="high"
             className="portrait"
           />
           <div className="hero-name">

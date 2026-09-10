@@ -22,6 +22,7 @@ export function LocalTime({ timezone }: { timezone: string }) {
 
   return (
     <span
+      data-nosnippet
       className="tabular-nums"
       aria-label={"Time in India: " + time + " IST"}
     >

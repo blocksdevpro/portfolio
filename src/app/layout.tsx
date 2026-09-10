@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { RESUME_DATA } from "@/constants/resume";
+import { SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 const interSans = Inter({
   variable: "--font-inter-sans",
@@ -27,20 +28,12 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: `${RESUME_DATA.name} · Rust Backend Developer`,
+    default: SITE_TITLE,
     template: `%s | ${RESUME_DATA.name}`,
   },
-  description: RESUME_DATA.summary,
-  metadataBase: new URL(RESUME_DATA.website),
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    url: RESUME_DATA.website,
-    siteName: RESUME_DATA.name,
-    title: `${RESUME_DATA.name} · Rust Backend Developer`,
-    description: RESUME_DATA.description,
-  },
-  twitter: { card: "summary_large_image", creator: "@blocksdev_pro" },
+  metadataBase: new URL(SITE_URL),
+  authors: [{ name: RESUME_DATA.name, url: SITE_URL }],
+  creator: RESUME_DATA.name,
 };
 
 export default function RootLayout({
@@ -61,19 +54,6 @@ export default function RootLayout({
             {children}
           </TooltipProvider>
         </ThemeProvider>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Person",
-              name: RESUME_DATA.name,
-              url: RESUME_DATA.website,
-              jobTitle: RESUME_DATA.title,
-              sameAs: Object.values(RESUME_DATA.socials),
-            }).replace(/</g, "\\u003c"),
-          }}
-        />
         {process.env.VERCEL === "1" && <Analytics />}
       </body>
     </html>
