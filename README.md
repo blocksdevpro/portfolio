@@ -1,6 +1,6 @@
 # Uttam Kumbhakar's portfolio
 
-Source for [blocksdev.pro](https://blocksdev.pro), my portfolio for Rust backend work and projects. The site uses Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
+Source for [blocksdev.pro](https://www.blocksdev.pro), my portfolio for Rust backend work and projects. The site uses Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
 
 ## Run locally
 
@@ -40,6 +40,6 @@ GitHub activity loads through `/api/contributions`, which reads the public GitHu
 
 `src/lib/seo.ts` owns the search title, description, canonical origin, and typed structured data. The homepage supplies its own metadata and profile graph, so missing pages do not inherit a homepage canonical or profile markup. Social previews use the generated 1200 × 630 Open Graph image.
 
-To verify the production response, run `bun run build` and `bun run start`, then run `bun run verify:seo` in another terminal. For a different port or a deployed URL, use `bun run verify:seo -- https://blocksdev.pro`.
+To verify the production response, run `bun run build` and `bun run start`, then run `bun run verify:seo` in another terminal. For a different port or a deployed URL, use `bun run verify:seo -- https://www.blocksdev.pro`.
 
 See [SEO maintenance and deployment checks](docs/seo.md) for what to verify after publishing.

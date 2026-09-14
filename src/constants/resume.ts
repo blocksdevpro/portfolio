@@ -10,7 +10,7 @@ export const RESUME_DATA: ResumeData = {
   location: "Jharkhand, India",
   timezone: "Asia/Kolkata",
   email: "mail@blocksdev.pro",
-  website: "https://blocksdev.pro",
+  website: "https://www.blocksdev.pro",
   summary:
     "Backend developer focused primarily on Rust, building async backend systems, local AI applications, and developer tools. Experienced with Axum, Tokio, PostgreSQL, SQLx, authentication systems, and production API development. Currently deepening expertise in systems programming, concurrency, and local inference.",
   pronouns: "he/him",

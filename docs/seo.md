@@ -1,6 +1,6 @@
 # SEO maintenance
 
-The page describes Uttam Kumbhakar's Rust backend work, local AI applications, and projects. Keep those descriptions accurate and consistent with the visible portfolio. The canonical site is `https://blocksdev.pro/`.
+The page describes Uttam Kumbhakar's Rust backend work, local AI applications, and projects. Keep those descriptions accurate and consistent with the visible portfolio. The canonical site is `https://www.blocksdev.pro/`.
 
 ## What the implementation covers
 
@@ -21,9 +21,9 @@ The page describes Uttam Kumbhakar's Rust backend work, local AI applications, a
 
 ## After deployment
 
-1. Run `bun run verify:seo -- https://blocksdev.pro` against the deployed site.
-2. Confirm that alternate domains redirect permanently to `https://blocksdev.pro/`. Manage domain redirects in the hosting provider rather than redirecting localhost or preview builds in application code.
-3. Verify the domain in Google Search Console, submit `https://blocksdev.pro/sitemap.xml`, and inspect the homepage URL. Request indexing after the new version is live.
+1. Run `bun run verify:seo -- https://www.blocksdev.pro` against the deployed site. The check requires direct responses rather than following redirects from the canonical URLs.
+2. Confirm that `https://blocksdev.pro/` and other alternate domains redirect permanently to `https://www.blocksdev.pro/`. Manage domain redirects in the hosting provider rather than redirecting localhost or preview builds in application code.
+3. Verify the `blocksdev.pro` Domain property in Google Search Console, submit `https://www.blocksdev.pro/sitemap.xml`, and inspect `https://www.blocksdev.pro/`. Request indexing after the new version is live.
 4. Validate the deployed homepage in Google's Rich Results Test. Structured data provides context and eligibility where applicable; Google decides whether to display enhanced results.
 5. Monitor indexing, queries, clicks, and real visitor Core Web Vitals in Search Console. Use the observed queries to guide substantive project write-ups, with real implementation details and outcomes.
 

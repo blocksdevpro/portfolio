@@ -2,10 +2,11 @@ import assert from "node:assert/strict";
 
 // Inspect the actual server response, so missing SSR metadata fails this check.
 const base = new URL(process.argv[2] ?? "http://localhost:3000");
-const canonical = "https://blocksdev.pro/";
+const canonical = "https://www.blocksdev.pro/";
 const fetchPage = (pathname, options = {}) =>
   fetch(new URL(pathname, base), {
     signal: AbortSignal.timeout(15_000),
+    redirect: "manual",
     ...options,
   });
 const attributes = (tag) =>
@@ -26,7 +27,7 @@ const link = (html, rel) =>
   tags(html, "link").find((tag) => tag.rel === rel)?.href;
 
 const response = await fetchPage("/");
-assert.equal(response.status, 200, "Homepage must return 200");
+assert.equal(response.status, 200, "Homepage must return 200 without redirecting");
 assert.doesNotMatch(response.headers.get("x-robots-tag") ?? "", /noindex/i);
 const html = await response.text();
 assert.equal((html.match(/<h1\b/g) ?? []).length, 1, "One primary heading");
