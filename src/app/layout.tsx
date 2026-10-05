@@ -10,7 +10,7 @@ import { SITE_TITLE, SITE_URL } from "@/lib/seo";
 const interSans = Inter({
   variable: "--font-inter-sans",
   subsets: ["latin"],
-  display: "optional",
+  display: "swap",
 });
 
 const handwriting = Caveat({
@@ -23,7 +23,7 @@ const handwriting = Caveat({
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  display: "optional",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
