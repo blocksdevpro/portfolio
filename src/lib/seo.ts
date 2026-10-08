@@ -1,5 +1,5 @@
 import type { Graph } from "schema-dts";
-import { RESUME_DATA } from "@/constants/resume";
+import { ALL_PROJECTS, RESUME_DATA } from "@/constants/resume";
 
 export const SITE_URL = new URL("/", RESUME_DATA.website).href;
 export const SITE_TITLE = `${RESUME_DATA.name} | ${RESUME_DATA.title}`;
@@ -42,7 +42,7 @@ export const PROFILE_STRUCTURED_DATA = {
         knowsAbout: RESUME_DATA.skills,
         sameAs: Object.values(RESUME_DATA.socials),
       },
-      hasPart: RESUME_DATA.projects.map((project) => ({
+      hasPart: ALL_PROJECTS.map((project) => ({
         "@type": "SoftwareSourceCode",
         "@id": `${SITE_URL}#${project.id}`,
         name: project.title,

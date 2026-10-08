@@ -2,6 +2,7 @@ import {
   Cloud,
   Cpu,
   Database,
+  Desktop,
   HardDrives,
   Microphone,
   SpeakerHigh,
@@ -15,6 +16,7 @@ const icons = {
   database: Database,
   storage: HardDrives,
   cloud: Cloud,
+  monitor: Desktop,
 };
 
 export function ProjectArchitecture({

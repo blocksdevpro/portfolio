@@ -1,4 +1,5 @@
 import type { ResumeData } from "@/types/resume";
+import { CALORINE_PROJECT } from "@/constants/archived-projects";
 
 export const RESUME_DATA: ResumeData = {
   name: "Uttam Kumbhakar",
@@ -52,6 +53,65 @@ export const RESUME_DATA: ResumeData = {
     },
   ],
   projects: [
+    {
+      id: "vstretch",
+      title: "vstretch",
+      category: "WINDOWS UTILITY",
+      subtitle: "Automatic display switching for FPS games",
+      date: "2026",
+      status: "active",
+      summaryHighlights: [
+        "Automatically applies stretched resolution for Valorant and CS2.",
+        "Restores the previous desktop display settings when the game exits.",
+      ],
+      media: {
+        kind: "architecture",
+        layout: "pipeline",
+        title: "From game detection to display switching",
+        nodes: [
+          {
+            title: "Preset",
+            detail: "Saved stretch",
+            icon: "storage",
+          },
+          {
+            title: "Watch games",
+            detail: "Valorant & CS2",
+            icon: "cpu",
+          },
+          {
+            title: "Switch display",
+            detail: "Win32 APIs",
+            icon: "monitor",
+          },
+        ],
+        caption:
+          "A saved stretch preset applies through Win32 display APIs when Valorant or CS2 gains focus. The previous desktop display settings return when the game exits, with optional restoration on Alt+Tab.",
+      },
+      description:
+        "A Rust Windows tray app that automatically switches to stretched resolution for Valorant and CS2, then restores your desktop when the game exits.",
+      highlights: [
+        "Game detection, saved tray presets, and a configurable global hotkey for manual switching.",
+        "Temporary Win32 display changes with crash recovery and optional desktop restoration on Alt+Tab.",
+        "A Ratatui terminal interface and in-app updates verified against SHA-256 release checksums.",
+      ],
+      primaryTech: ["Rust", "Win32 APIs", "Ratatui"],
+      tech: [
+        "Rust",
+        "Win32 APIs",
+        "tray-icon",
+        "Ratatui",
+        "Crossterm",
+        "Serde",
+        "TOML",
+        "Reqwest",
+        "SHA-256",
+      ],
+      links: {
+        production: "https://vstretch.blocksdev.pro",
+        github: "https://github.com/blocksdevpro/vstretch",
+      },
+    },
     {
       id: "boris",
       title: "Boris",
@@ -110,65 +170,8 @@ export const RESUME_DATA: ResumeData = {
         github: "https://github.com/blocksdevpro/boris-assistant",
       },
     },
-    {
-      id: "calorine",
-      title: "Calorine API",
-      category: "BACKEND SYSTEM",
-      subtitle: "The backend behind better habits",
-      date: "2026",
-      status: "active",
-      summaryHighlights: [
-        "Google OAuth and JWT authentication with CSRF protection.",
-        "Image storage and AI meal analysis behind a typed Rust API.",
-      ],
-      media: {
-        kind: "architecture",
-        layout: "branches",
-        title: "Calorine API",
-        nodes: [
-          {
-            title: "PostgreSQL",
-            detail: "Data",
-            icon: "database",
-          },
-          {
-            title: "Cloudflare R2",
-            detail: "Photos",
-            icon: "storage",
-          },
-          {
-            title: "OpenRouter",
-            detail: "Meal analysis",
-            icon: "cloud",
-          },
-        ],
-        caption:
-          "Calorine API connects to PostgreSQL for application data through SQLx, Cloudflare R2 for meal photos, and OpenRouter for AI meal analysis.",
-      },
-      description:
-        "The backend for a calorie-tracking app, with secure sign-in, meal photo storage, and AI nutrition analysis.",
-      highlights: [
-        "Google OAuth and JWT sessions with CSRF protection.",
-        "Async request handling with Tokio, structured tracing, typed errors, and SQLx migrations.",
-      ],
-      primaryTech: ["Rust", "Axum", "PostgreSQL"],
-      tech: [
-        "Rust",
-        "Axum",
-        "Tokio",
-        "PostgreSQL",
-        "SQLx",
-        "JWT",
-        "Google OAuth 2.0",
-        "Cloudflare R2",
-        "OpenRouter",
-      ],
-      links: {
-        production: "https://calorine.in",
-        github: "https://github.com/blocksdevpro/rust-backend",
-      },
-    },
   ],
+  moreProjects: [CALORINE_PROJECT],
   education: [
     {
       school: "Binod Bihari Mahto Koyalanchal University (BBMKU)",
@@ -178,3 +181,8 @@ export const RESUME_DATA: ResumeData = {
   ],
   languages: [],
 };
+
+export const ALL_PROJECTS = [
+  ...RESUME_DATA.projects,
+  ...RESUME_DATA.moreProjects,
+];

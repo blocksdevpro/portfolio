@@ -31,7 +31,7 @@ import { useCopyFeedback } from "@/hooks/use-copy-feedback";
 import { playFeedback } from "@/lib/feedback-audio";
 import { setThemeWithFeedback } from "@/lib/theme-feedback";
 import { scrollToSection, type SectionHash } from "@/lib/scroll-to-section";
-import { RESUME_DATA } from "@/constants/resume";
+import { ALL_PROJECTS } from "@/constants/resume";
 
 type Command = {
   id: string;
@@ -72,14 +72,15 @@ export function CommandMenu({
     () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘ K" : "Ctrl K"),
     () => "Ctrl K",
   );
+  const projectNames = ALL_PROJECTS.map((project) => project.title);
 
   const commands: Command[] = [
     {
       id: "work",
       group: "Navigate",
       label: "View projects",
-      description: "Boris and Calorine",
-      keywords: "work portfolio boris calorine",
+      description: projectNames.join(", "),
+      keywords: `work portfolio ${projectNames.join(" ")}`,
       icon: <Code />,
       action: { kind: "navigate", href: "#projects" },
     },
@@ -162,7 +163,7 @@ export function CommandMenu({
       icon: <GithubLogo />,
       action: { kind: "external", href: githubUrl },
     });
-  for (const project of RESUME_DATA.projects) {
+  for (const project of ALL_PROJECTS) {
     if (project.links?.production)
       commands.push({
         id: project.id,

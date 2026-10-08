@@ -58,7 +58,10 @@ export default function Home() {
       />
       <main id="main" tabIndex={-1}>
         <Hero data={RESUME_DATA} />
-        <Projects projects={RESUME_DATA.projects} />
+        <Projects
+          projects={RESUME_DATA.projects}
+          moreProjects={RESUME_DATA.moreProjects}
+        />
         <Experience experience={RESUME_DATA.experience} />
         <TechStack skills={RESUME_DATA.skills} />
         <Education

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { load } from "cheerio";
 
 // Inspect the actual server response, so missing SSR metadata fails this check.
 const base = new URL(process.argv[2] ?? "http://localhost:3000");
@@ -68,7 +69,15 @@ assert.equal(website.publisher["@id"], profile.mainEntity["@id"]);
 assert.ok(
   profile.mainEntity.sameAs.includes("https://github.com/blocksdevpro"),
 );
-assert.equal(profile.hasPart.length, 2);
+const visibleProjects = load(html)("#projects article[id]")
+  .map((_, article) => article.attribs.id)
+  .get();
+assert.ok(visibleProjects.length > 0, "The portfolio must show projects");
+assert.deepEqual(
+  profile.hasPart.map((project) => new URL(project["@id"]).hash.slice(1)),
+  visibleProjects,
+  "Structured data must match every visible selected and additional project",
+);
 for (const project of profile.hasPart) {
   assert.equal(project.author["@id"], profile.mainEntity["@id"]);
   assert.match(project.codeRepository, /^https:\/\/github.com\//);

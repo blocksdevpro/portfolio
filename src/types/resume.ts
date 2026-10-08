@@ -24,7 +24,14 @@ export interface Project {
     nodes: {
       title: string;
       detail: string;
-      icon: "microphone" | "cpu" | "speaker" | "database" | "storage" | "cloud";
+      icon:
+        | "microphone"
+        | "cpu"
+        | "speaker"
+        | "database"
+        | "storage"
+        | "cloud"
+        | "monitor";
     }[];
     caption: string;
   };
@@ -34,6 +41,13 @@ export interface Project {
   };
   highlights?: string[];
 }
+
+export type ProjectSummary = Pick<
+  Project,
+  "id" | "title" | "description" | "links"
+> & {
+  primaryTech: Project["tech"];
+};
 
 export interface Education {
   school: string;
@@ -61,6 +75,7 @@ export interface ResumeData {
   skills: string[];
   experience: Experience[];
   projects: Project[];
+  moreProjects: ProjectSummary[];
   education: Education[];
   languages: { language: string; level: string }[];
 }

@@ -31,8 +31,13 @@ bun run verify:seo # Check SEO against a running production server on port 3000
 - `src/app` contains the page, metadata, styles, sitemap, robots file, and API routes.
 - `src/components` contains page sections and interactive components.
 - `src/constants/resume.ts` contains profile details, experience, projects, skills, and links.
+- `src/constants/archived-projects.ts` preserves complete entries removed from Selected work, including Calorine's architecture, engineering details, stack, and links.
 - `src/lib` contains navigation and external data parsing helpers.
 - `public/portrait.webp` is the profile image.
+
+`RESUME_DATA.projects` controls the two selected projects. `RESUME_DATA.moreProjects` supplies the compact More projects list, with a title, description, primary technologies, and links for each entry. Add future project summaries there.
+
+Calorine's compact entry uses `CALORINE_PROJECT` from the archive. To feature its full architecture again, move that reference from `RESUME_DATA.moreProjects` into `RESUME_DATA.projects`.
 
 GitHub activity loads through `/api/contributions`, which reads the public GitHub contribution calendar directly and falls back to the GitHub Contributions API if GitHub is unavailable or its markup changes. No GitHub token is required. Successful responses are cached for one hour; failures include the provider and error in the server logs and are not cached. Recent music loads through `/api/spotify`, which uses Last.fm data and links tracks to Spotify search. Vercel Analytics loads only on Vercel deployments.
 

@@ -8,7 +8,13 @@ import { SectionHeading } from "@/components/section-heading";
 import { ProjectArchitecture } from "@/components/project-architecture";
 import type { ResumeData } from "@/types/resume";
 
-export function Projects({ projects }: { projects: ResumeData["projects"] }) {
+export function Projects({
+  projects,
+  moreProjects,
+}: {
+  projects: ResumeData["projects"];
+  moreProjects: ResumeData["moreProjects"];
+}) {
   return (
     <section
       id="projects"
@@ -99,6 +105,63 @@ export function Projects({ projects }: { projects: ResumeData["projects"] }) {
           </details>
         </article>
       ))}
+      {moreProjects.length > 0 && (
+        <section
+          id="more-projects"
+          className="more-projects section-inset"
+          aria-labelledby="more-projects-heading"
+        >
+          <h3 id="more-projects-heading">More projects</h3>
+          <div className="more-projects-list">
+            {moreProjects.map((project) => (
+              <article
+                key={project.id}
+                id={project.id}
+                className="more-project-entry"
+                aria-labelledby={`${project.id}-title`}
+              >
+                <div className="more-project-copy">
+                  <h4 id={`${project.id}-title`}>{project.title}</h4>
+                  <p>{project.description}</p>
+                </div>
+                <ul
+                  className="more-project-tech"
+                  aria-label={`${project.title} primary technologies`}
+                >
+                  {project.primaryTech.map((tech) => (
+                    <li key={tech}>{tech}</li>
+                  ))}
+                </ul>
+                <nav
+                  className="project-links"
+                  aria-label={`${project.title} links`}
+                >
+                  {project.links?.production && (
+                    <a
+                      href={project.links.production}
+                      aria-label={`Visit project: ${project.title}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Visit <ArrowUpRight size={15} aria-hidden="true" />
+                    </a>
+                  )}
+                  {project.links?.github && (
+                    <a
+                      href={project.links.github}
+                      aria-label={`Source code for ${project.title} on GitHub`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <GithubLogo size={16} aria-hidden="true" /> Source
+                    </a>
+                  )}
+                </nav>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
     </section>
   );
 }
